@@ -1,0 +1,17 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+  <ui:Style src="TerrainityWindow.uss" />
+    <ui:VisualElement name="libraryPage" class="page">
+      <ui:ScrollView class="page-scroll">
+        <ui:Label text="YOUR OWN LITTLE ECOSYSTEM" class="eyebrow" />
+        <ui:Label text="Generated library" class="title" />
+        <ui:Label text="Only finished Terrainity prefabs belong here. Select an entry to locate it in the Project window, then drag that prefab into Terrain’s Add Tree or Add Detail Mesh dialog." class="copy" />
+        <ui:VisualElement name="libraryToolbar" class="row" />
+        <ui:VisualElement name="libraryList" class="grow" />
+        <ui:VisualElement class="card">
+          <ui:Label text="Generated resources" class="section-title" />
+          <ui:Label text="Assets / TerrainityGenerated /&#10;    Trees or Rocks / [Asset name] / Prefabs, Models, Recipes&#10;    Shared / Materials, Textures" class="copy" />
+          <ui:Label text="Matching material settings are shared between exports. Editing a shared resource changes every asset using it. Existing exports retain their original resources." class="small" />
+        </ui:VisualElement>
+      </ui:ScrollView>
+    </ui:VisualElement>
+</ui:UXML>

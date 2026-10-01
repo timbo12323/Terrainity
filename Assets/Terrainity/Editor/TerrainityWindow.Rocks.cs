@@ -14,7 +14,7 @@ namespace Terrainity.Editor
         [SerializeField] string lastRockFolder, rockStatus;
         [SerializeField] GameObject[] lastRockPrefabs = Array.Empty<GameObject>();
 
-        void BuildRockBuilder(VisualElement split, ScrollView controls)
+        void BuildRockBuilder(VisualElement controls)
         {
             if (rockRecipe == null) rockRecipe = new RockRecipe();
             rockRecipe.Validate(); variant = Mathf.Clamp(variant, 0, rockRecipe.variantCount - 1);
@@ -95,7 +95,7 @@ namespace Terrainity.Editor
             IntSlider(family, "Family size", 1, 12, rockRecipe.variantCount, x => { rockRecipe.variantCount = x; variant = Mathf.Min(variant, x - 1); }, "Number of exported sibling prefabs.");
             Slider(family, "Shape variation", 0, .6f, rockRecipe.variation, x => rockRecipe.variation = x);
             Action(controls, "Reset rock settings", () => { rockRecipe = new RockRecipe(); variant = 0; ShowTab(1); });
-            var panel = BuildPreviewPanel(split);
+            var panel = BuildPreviewPanel();
             var export = Box(panel, "card");
             var heading = Box(export, "row"); Text(heading, "Generate rock family", "section-title");
             AddHeaderHelp(heading, "Saves meshes, prefab siblings and a JSON recipe to Rocks. Matching materials and textures are shared. Drag prefabs into your scene. LODs use the same seed and progressively fewer subdivisions.");
@@ -144,7 +144,7 @@ namespace Terrainity.Editor
         {
             preview?.BuildRock(rockRecipe, variant);
             if (previewCaption != null) previewCaption.text = rockRecipe.preset + " / Sibling " + (variant + 1) + " of " + rockRecipe.variantCount;
-            if (meshStats != null && preview != null) meshStats.text = $"Rock: {preview.WoodTriangles:N0} triangles • {preview.Meshes[0].vertexCount:N0} vertices";
+            UpdateMeshStats("Rock");
             previewElement?.MarkDirtyRepaint(); Repaint();
         }
     }

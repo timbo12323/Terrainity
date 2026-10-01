@@ -77,18 +77,18 @@ namespace Terrainity.Editor
 
         void RestoreUndoSettings()
         {
-            if (this == null || page == null) return;
+            if (this == null || builderPage == null) return;
             restoringUndo = true;
             try
             {
                 CancelPreviewUpdate();
-                var controls = page.Q<ScrollView>(className: "controls");
-                var panel = page.Q<ScrollView>(className: "preview-panel");
+                var controls = rootVisualElement.Q<ScrollView>(className: "controls");
+                var panel = rootVisualElement.Q<ScrollView>(className: "preview-panel");
                 Vector2 controlsOffset = controls?.scrollOffset ?? Vector2.zero;
                 Vector2 panelOffset = panel?.scrollOffset ?? Vector2.zero;
                 ShowTab(currentTab);
-                var newControls = page.Q<ScrollView>(className: "controls");
-                var newPanel = page.Q<ScrollView>(className: "preview-panel");
+                var newControls = rootVisualElement.Q<ScrollView>(className: "controls");
+                var newPanel = rootVisualElement.Q<ScrollView>(className: "preview-panel");
                 newControls?.schedule.Execute(() => newControls.scrollOffset = controlsOffset);
                 newPanel?.schedule.Execute(() => newPanel.scrollOffset = panelOffset);
                 SavePreviewPreferences();

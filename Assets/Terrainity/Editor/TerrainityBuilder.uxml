@@ -1,0 +1,29 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+  <ui:Style src="TerrainityWindow.uss" />
+    <ui:VisualElement name="builderPage" class="page">
+      <ui:VisualElement name="builderSplit" class="builder">
+        <ui:ScrollView name="builderControls" class="controls">
+          <ui:Label text="ASSET WORKSHOP" class="eyebrow" />
+          <ui:VisualElement name="builderFields" />
+        </ui:ScrollView>
+        <ui:VisualElement name="parameterDivider" class="parameter-divider" tooltip="Drag left or right to resize the parameter menu. Double-click to reset." />
+        <ui:ScrollView name="builderPreviewPanel" class="preview-panel">
+          <ui:VisualElement name="builderPreviewContent">
+            <ui:VisualElement class="row">
+              <ui:Label text="LIVE SHAPE STUDY" class="eyebrow" />
+              <ui:VisualElement name="previewHelp" class="row grow" />
+            </ui:VisualElement>
+            <ui:Label name="previewCaption" class="section-title" />
+            <ui:VisualElement name="previewOptions" class="row" />
+            <ui:VisualElement name="previewStage" class="preview-stage">
+              <ui:VisualElement name="previewImageHost" class="preview" />
+            </ui:VisualElement>
+            <ui:Label name="previewResizeHandle" text="⋯  Drag to resize preview  ⋯" class="preview-resize-handle" tooltip="Drag up or down to change preview height. Double-click to reset." />
+            <ui:VisualElement name="previewButtons" class="row" />
+            <ui:VisualElement name="previewExport" />
+          </ui:VisualElement>
+          <ui:VisualElement name="builderPlaceholder" class="empty hidden" />
+        </ui:ScrollView>
+      </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
