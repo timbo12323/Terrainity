@@ -1,15 +1,44 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements">
-  <ui:Style src="TerrainityWindow.uss" />
-  <ui:VisualElement class="terrainity">
-    <ui:VisualElement class="header">
-      <ui:VisualElement class="grow">
-        <ui:Label text="T E R R A I N I T Y" class="brand" />
-        <ui:Label text="A little wilderness, made your way." class="subtitle" />
-      </ui:VisualElement>
-      <ui:Label text="FOLIAGE STUDIO  /  UI PREVIEW" class="badge" />
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/Terrainity/Editor/TerrainityWindow.uss?fileID=7433441132597879392&amp;guid=5a21fd46bc531ca46b1fe16e4d5f114b&amp;type=3#TerrainityWindow"/>
+    <ui:VisualElement class="terrainity">
+        <ui:VisualElement class="header">
+            <ui:VisualElement class="grow">
+                <ui:Label text="T E R R A I N I T Y" class="brand" style="scale: 1 1; -unity-text-align: upper-left; font-size: 30px;"/>
+                <ui:Label name="latestRelease" text="Checking latest GitHub release…" class="release-summary"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement class="tabs">
+            <ui:Button name="homeTab" text="01  Welcome"/>
+            <ui:Button name="builderTab" text="02  Asset builder"/>
+            <ui:Button name="libraryTab" text="03  Library"/>
+        </ui:VisualElement>
+        <ui:VisualElement name="homePage" class="page">
+            <ui:ScrollView class="page-scroll">
+                <ui:VisualElement class="hero">
+                    <ui:Label text="FROM ONE SEED TO A WHOLE FOREST" class="eyebrow"/>
+                    <ui:Label text="Shape your own wilderness." class="title"/>
+                    <ui:Label text="Start with a seed. Find a silhouette. Make it yours. Terrainity is a foliage workshop for trees, grass, rocks and bushes, designed around Unity Terrain." class="copy"/>
+                    <ui:Button name="startTreeButton" text="Start shaping an asset  →" class="primary"/>
+                </ui:VisualElement>
+                <ui:VisualElement class="cards">
+                    <ui:VisualElement class="card feature">
+                        <ui:Label text="01 / Shape" class="section-title"/>
+                        <ui:Label text="Explore a live asset concept with repeatable seeds and species-specific silhouettes." class="copy"/>
+                    </ui:VisualElement>
+                    <ui:VisualElement class="card feature">
+                        <ui:Label text="02 / Vary" class="section-title"/>
+                        <ui:Label text="Preview subtle changes within the same seed family. Preserve the species and overall character." class="copy"/>
+                    </ui:VisualElement>
+                    <ui:VisualElement class="card feature">
+                        <ui:Label text="03 / Organize" class="section-title"/>
+                        <ui:Label text="A dedicated library for generated prefabs, with models, materials and textures kept together." class="copy"/>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:Label text="Generate tree families as reusable prefabs, add them to Terrain’s Paint Trees palette, or export a Unity package with their resources." class="small"/>
+            </ui:ScrollView>
+        </ui:VisualElement>
+        <ui:VisualElement name="builderSlot" class="page hidden"/>
+        <ui:VisualElement name="librarySlot" class="page hidden"/>
+        <ui:Label name="status" text="Tree workshop • Shape, save and generate Terrain-ready families." class="footer"/>
     </ui:VisualElement>
-    <ui:VisualElement name="tabs" class="tabs" />
-    <ui:VisualElement name="page" class="page" />
-    <ui:Label name="status" text="Tree workshop • Shape, save and generate Terrain-ready families." class="footer" />
-  </ui:VisualElement>
 </ui:UXML>

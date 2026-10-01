@@ -27,16 +27,14 @@ namespace Terrainity.Editor
         [SerializeField] PreviewLightingSettings previewLighting = new PreviewLightingSettings();
         [SerializeField] bool showPreviewLighting = true;
         [SerializeField] bool showMeshOverlay;
-        VisualElement page;
-        Label dependencyStatus;
-        Button installButton, refreshButton;
+        VisualElement homePage, builderPage, libraryPage, builderSlot, librarySlot;
+        bool builderInteractionsBound, previewResizeBound;
         TreePreview preview;
         VisualElement previewElement;
         ScrollView parameterScroll;
         Foldout trunkControls, rootControls, branchControls, foliageControls;
         Label previewCaption;
         Label meshStats;
-        [SerializeField] bool panWithLeftMouse;
         readonly Dictionary<string, bool> sectionStates = new Dictionary<string, bool>();
         readonly List<Button> tabs = new List<Button>();
         const string GeneratedRoot = "Assets/TerrainityGenerated";
@@ -52,7 +50,6 @@ namespace Terrainity.Editor
 
         void OnEnable()
         {
-            TerrainityDependencies.Changed += UpdateDependencies;
             Undo.undoRedoPerformed += RestoreUndoSettings;
             if (PreviewPreferences.instance.Restore(out var lighting, out var environment, out bool visible))
             {
@@ -66,12 +63,12 @@ namespace Terrainity.Editor
         void SavePreviewPreferences() => PreviewPreferences.instance.Store(previewLighting, previewEnvironment, showPreviewLighting);
         void OnDisable()
         {
+            StopReleaseCheck();
             EndUndoDrag();
             Undo.undoRedoPerformed -= RestoreUndoSettings;
             CancelPreviewUpdate();
             SavePreviewPreferences();
             PreviewPreferences.instance.Flush();
-            TerrainityDependencies.Changed -= UpdateDependencies;
             preview?.Dispose();
             preview = null;
         }
@@ -81,35 +78,52 @@ namespace Terrainity.Editor
             InstallUndoInput();
             rootVisualElement.Clear();
             tabs.Clear();
+            builderInteractionsBound = previewResizeBound = false;
             var path = AssetDatabase.GetAssetPath(MonoScript.FromScriptableObject(this));
-            var layout = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(Path.GetDirectoryName(path).Replace('\\', '/') + "/TerrainityWindow.uxml");
+            var directory = Path.GetDirectoryName(path).Replace('\\', '/');
+            var layout = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(directory + "/TerrainityWindow.uxml");
+            var builderLayout = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(directory + "/TerrainityBuilder.uxml");
+            var libraryLayout = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(directory + "/TerrainityLibrary.uxml");
             if (layout == null)
             {
                 rootVisualElement.Add(new HelpBox("TerrainityWindow.uxml must stay beside TerrainityWindow.cs.", HelpBoxMessageType.Error));
                 return;
             }
+            if (builderLayout == null || libraryLayout == null)
+            {
+                rootVisualElement.Add(new HelpBox("TerrainityBuilder.uxml and TerrainityLibrary.uxml must stay beside TerrainityWindow.cs.", HelpBoxMessageType.Error));
+                return;
+            }
             layout.CloneTree(rootVisualElement);
-            page = rootVisualElement.Q("page");
-            var tabBar = rootVisualElement.Q("tabs");
-            string[] names = { "01  Welcome", "02  Asset builder", "03  Library" };
-            for (int i = 0; i < names.Length; i++)
+            builderSlot = rootVisualElement.Q("builderSlot");
+            librarySlot = rootVisualElement.Q("librarySlot");
+            builderLayout.CloneTree(builderSlot);
+            libraryLayout.CloneTree(librarySlot);
+            homePage = rootVisualElement.Q("homePage");
+            latestReleaseLabel = rootVisualElement.Q<Label>("latestRelease");
+            CheckLatestRelease();
+            builderPage = rootVisualElement.Q("builderPage");
+            libraryPage = rootVisualElement.Q("libraryPage");
+            rootVisualElement.Q<Button>("startTreeButton").clicked += () => ShowTab(1);
+            string[] tabNames = { "homeTab", "builderTab", "libraryTab" };
+            for (int i = 0; i < tabNames.Length; i++)
             {
                 int index = i;
-                var button = new Button(() => ShowTab(index)) { text = names[i] };
+                var button = rootVisualElement.Q<Button>(tabNames[i]);
+                button.clicked += () => ShowTab(index);
                 tabs.Add(button);
-                tabBar.Add(button);
             }
             ShowTab(currentTab);
         }
 
         void ShowTab(int index)
         {
-            if (page == null) return;
+            if (builderPage == null || libraryPage == null) return;
             CancelPreviewUpdate();
             currentTab = Mathf.Clamp(index, 0, 2);
-            page.Clear();
-            dependencyStatus = null;
-            installButton = refreshButton = null;
+            homePage.EnableInClassList("hidden", currentTab != 0);
+            builderSlot.EnableInClassList("hidden", currentTab != 1);
+            librarySlot.EnableInClassList("hidden", currentTab != 2);
             previewElement = null;
             parameterScroll = null;
             trunkControls = rootControls = branchControls = foliageControls = null;
@@ -117,9 +131,8 @@ namespace Terrainity.Editor
             preview?.Dispose();
             preview = null;
             for (int i = 0; i < tabs.Count; i++) tabs[i].EnableInClassList("selected", i == currentTab);
-            if (currentTab == 0) BuildWelcome();
-            else if (currentTab == 1) BuildBuilder();
-            else BuildLibrary();
+            if (currentTab == 1) BuildBuilder();
+            else if (currentTab == 2) BuildLibrary();
         }
 
         static VisualElement Box(VisualElement parent, string classes)
@@ -144,57 +157,22 @@ namespace Terrainity.Editor
             return button;
         }
 
-        void BuildWelcome()
-        {
-            var scroll = new ScrollView(); scroll.AddToClassList("page-scroll"); page.Add(scroll);
-            var hero = Box(scroll, "hero");
-            Text(hero, "FROM ONE SEED TO A WHOLE FOREST", "eyebrow");
-            Text(hero, "Shape your own wilderness.", "title");
-            Text(hero, "Start with a seed. Find a silhouette. Make it yours. Terrainity is a foliage workshop for trees, grass, rocks and bushes, designed around Unity Terrain.");
-            Action(hero, "Start shaping a tree  →", () => ShowTab(1), true);
-            var cards = Box(scroll, "cards");
-            Feature(cards, "01 / Shape", "Explore a live tree concept with repeatable seeds and species-specific silhouettes.");
-            Feature(cards, "02 / Vary", "Preview subtle changes within the same tree family. Preserve the species and overall character.");
-            Feature(cards, "03 / Organize", "A dedicated library for generated prefabs, with models, materials and textures kept together.");
-            var dependencies = Box(scroll, "card");
-            Text(dependencies, "Your workshop dependencies", "section-title");
-            Text(dependencies, "ProBuilder", "section-title");
-            Text(dependencies, "ProBuilder is optional for additional modeling workflows. Tree and rock generation work without it.");
-            dependencyStatus = Text(dependencies, TerrainityDependencies.Message);
-            var buttons = Box(dependencies, "row");
-            installButton = Action(buttons, "Install ProBuilder", TerrainityDependencies.Install, true);
-            refreshButton = Action(buttons, "Check again", TerrainityDependencies.Refresh);
-            Action(buttons, "Open Package Manager", () => UnityEditor.PackageManager.UI.Window.Open(TerrainityDependencies.ProBuilderId));
-            UpdateDependencies();
-            Text(scroll, "Generate tree families as reusable prefabs, add them to Terrain’s Paint Trees palette, or export a Unity package with their resources.", "small");
-        }
-
-        static void Feature(VisualElement parent, string heading, string body)
-        {
-            var card = Box(parent, "card feature"); Text(card, heading, "section-title"); Text(card, body);
-        }
-        void UpdateDependencies()
-        {
-            if (dependencyStatus == null) return;
-            dependencyStatus.text = TerrainityDependencies.Message;
-            installButton.text = TerrainityDependencies.Installed ? "ProBuilder installed" : "Install ProBuilder";
-            installButton.SetEnabled(!TerrainityDependencies.Busy && !TerrainityDependencies.Installed);
-            refreshButton.SetEnabled(!TerrainityDependencies.Busy);
-        }
-
         void BuildBuilder()
         {
-            var split = Box(page, "builder");
-            var controls = new ScrollView(); controls.AddToClassList("controls"); split.Add(controls);
-            parameterScroll = controls;
-            var divider = new VisualElement
-            { tooltip = "Drag left or right to resize the parameter menu. Double-click to reset." };
-            divider.AddToClassList("parameter-divider"); split.Add(divider);
+            var split = builderPage.Q("builderSplit");
+            var controlsScroll = builderPage.Q<ScrollView>("builderControls");
+            var controls = builderPage.Q("builderFields");
+            controls.Clear();
+            parameterScroll = controlsScroll;
+            var divider = builderPage.Q("parameterDivider");
+            float AvailableWidth() => Mathf.Max(310, Mathf.Min(800, split.contentRect.width - 328));
+            void ApplyParameterWidth() => controlsScroll.style.width = Mathf.Clamp(parameterWidth, 310, AvailableWidth());
+            controlsScroll.style.width = Mathf.Clamp(parameterWidth, 310, 800);
+            if (!builderInteractionsBound)
+            {
+            builderInteractionsBound = true;
             bool resizingParameters = false;
             float startX = 0, startWidth = 0;
-            float AvailableWidth() => Mathf.Max(310, Mathf.Min(800, split.contentRect.width - 328));
-            void ApplyParameterWidth() => controls.style.width = Mathf.Clamp(parameterWidth, 310, AvailableWidth());
-            controls.style.width = Mathf.Clamp(parameterWidth, 310, 800);
             split.RegisterCallback<GeometryChangedEvent>(_ => ApplyParameterWidth());
             divider.RegisterCallback<MouseDownEvent>(e =>
             {
@@ -202,7 +180,7 @@ namespace Terrainity.Editor
                 if (e.clickCount == 2) { parameterWidth = 355; ApplyParameterWidth(); }
                 else
                 {
-                    resizingParameters = true; startX = e.mousePosition.x; startWidth = controls.resolvedStyle.width;
+                    resizingParameters = true; startX = e.mousePosition.x; startWidth = controlsScroll.resolvedStyle.width;
                     divider.CaptureMouse();
                 }
                 e.StopPropagation();
@@ -219,16 +197,19 @@ namespace Terrainity.Editor
                 resizingParameters = false; divider.ReleaseMouse(); e.StopPropagation();
             });
             divider.RegisterCallback<MouseCaptureOutEvent>(_ => resizingParameters = false);
-            Text(controls, "ASSET WORKSHOP", "eyebrow");
+            }
             var type = new PopupField<string>("Asset type", new List<string> { "Trees", "Grass", "Rocks", "Bushes" }, category);
             type.RegisterValueChangedCallback(e => { category = e.newValue; variant = 0; ShowTab(1); }); controls.Add(type);
-            if (category == "Rocks") { BuildRockBuilder(split, controls); return; }
+            if (category == "Rocks") { BuildRockBuilder(controls); return; }
             if (category != "Trees")
             {
                 Text(controls, category + " • Coming next", "section-title");
                 Text(controls, category == "Grass" ? "Planned controls: blade shape, height, clump density, bend and color." : category == "Rocks" ? "Planned controls: silhouette, size, surface roughness, erosion and material." : "Planned controls: branching, spread, leaf shape, density and color.");
                 Text(controls, "Terrain destination: " + (category == "Grass" ? "Paint Details" : "Paint Trees / detail meshes"), "small");
-                var placeholder = Box(split, "preview-panel empty");
+                var placeholder = builderPage.Q("builderPlaceholder");
+                builderPage.Q("builderPreviewContent").AddToClassList("hidden");
+                placeholder.RemoveFromClassList("hidden");
+                placeholder.Clear();
                 Text(placeholder, category, "title"); Text(placeholder, "A new kind of wilderness is on its way.");
                 Action(placeholder, "Back to trees", () => { category = "Trees"; ShowTab(1); });
                 return;
@@ -285,7 +266,7 @@ namespace Terrainity.Editor
             Slider(trunk, "Trunk twist (°)", -720, 720, recipe.trunkTwist, x => recipe.trunkTwist = x);
             AddTip(trunk, "Negative lean and trunk bend reverse their direction. Sharpness changes smooth bends into elbows. Twist rotates bends and branches from base to tip, up to two turns in either direction; use nonzero Trunk bend for a corkscrew shape.");
             AddTip(silhouette, "Set the overall outline first. Crown start is the fraction of trunk height below the first limbs.");
-            var roots = Fold(controls, "Roots and ground placement");
+            var roots = Fold(controls, "Roots");
             rootControls = roots;
             MaterialToggle(roots, "Generate roots", recipe.rootsEnabled, x => recipe.rootsEnabled = x);
             IntSlider(roots, "Root count", 1, 12, recipe.rootCount, x => recipe.rootCount = x, "Roots distributed around the lower trunk.");
@@ -309,8 +290,7 @@ namespace Terrainity.Editor
             Slider(roots, "Root taper", 0, .95f, recipe.rootTaper, x => recipe.rootTaper = x);
             Slider(roots, "Attachment height (m)", 0, 1.5f, recipe.rootAttachmentHeight, x => recipe.rootAttachmentHeight = x);
             Slider(roots, "Root depth (m)", 0, 2, recipe.rootDepth, x => recipe.rootDepth = x);
-            Slider(roots, "Floor height (m)", -2, 2, recipe.floorHeight, x => recipe.floorHeight = x);
-            AddTip(roots, "Roots follow the lower trunk's orientation, then fan outward and down. Attachment height is above the original trunk base (limited to the lowest quarter); depth is below that base. Floor height selects the placement ground line: positive values bury more of the tree; negative values expose more. The preview grid is ground level, and the same offset is baked into all exported meshes/LODs. Roots share bark, detail and simplification settings. They do not conform to terrain slopes; the optional trunk collider does not cover roots.");
+            AddTip(roots, "Roots follow the lower trunk's orientation, then fan outward and down. Attachment height is above the original trunk base (limited to the lowest quarter); depth is below that base. Roots share bark, detail and simplification settings. They do not conform to terrain slopes; the optional trunk collider does not cover roots.");
             var branches = Fold(controls, "Branches / " + recipe.species);
             branchControls = branches;
             AddTip(branches, recipe.Profile.description);
@@ -446,7 +426,7 @@ namespace Terrainity.Editor
             Slider(family, "Shape variation", 0, .6f, recipe.variation, x => recipe.variation = x);
             AddTip(family, "Preview sibling shapes from the same recipe. The native Terrain brush will need a separate variant-painting integration to mix these automatically.");
             Action(controls, "Reset tree settings", () => { recipe = new TreeRecipe(); variant = 0; ShowTab(1); });
-            var panel = BuildPreviewPanel(split);
+            var panel = BuildPreviewPanel();
             var export = Box(panel, "card");
             var exportHeading = Box(export, "row");
             Text(exportHeading, "Destination / Paint Trees", "section-title");
@@ -499,23 +479,30 @@ namespace Terrainity.Editor
             Changed();
         }
 
-        ScrollView BuildPreviewPanel(VisualElement split)
+        VisualElement BuildPreviewPanel()
         {
-            var panel = new ScrollView(); panel.AddToClassList("preview-panel"); split.Add(panel);
-            var heading = Box(panel, "row"); Text(heading, "LIVE SHAPE STUDY", "eyebrow");
-            AddHeaderHelp(heading, "Left-drag to orbit. Middle-drag or Shift + left-drag to pan. Scroll to zoom. Enable Pan with left mouse to pan without a modifier. Reset view recenters the camera. " + (category == "Trees" ? "Shift-click a tree part to highlight it and open its controls." : "Use the mesh overlay to inspect the generated rock topology."));
-            previewCaption = Text(panel, "", "section-title");
-            meshStats = Text(panel, "", "small");
-            var viewOptions = Box(panel, "row");
+            var content = builderPage.Q("builderPreviewContent");
+            content.RemoveFromClassList("hidden");
+            var placeholder = builderPage.Q("builderPlaceholder");
+            placeholder.AddToClassList("hidden");
+            placeholder.Clear();
+            var help = builderPage.Q("previewHelp");
+            help.Clear();
+            AddHeaderHelp(help, "Left-drag to orbit. Middle-drag or Shift + left-drag to pan. Scroll to zoom. Reset view recenters the camera. " + (category == "Trees" ? "Shift-click a tree part to highlight it and open its controls." : "Use the mesh overlay to inspect the generated rock topology."));
+            previewCaption = builderPage.Q<Label>("previewCaption");
+            var viewOptions = builderPage.Q("previewOptions");
+            viewOptions.Clear();
             if (category == "Trees")
             {
             var foliage = new Toggle("Show foliage") { value = recipe.showFoliage };
+            foliage.AddToClassList("preview-option");
             foliage.tooltip = "Hide foliage to inspect limb placement, forks and curvature.";
             foliage.RegisterValueChangedCallback(e => { recipe.showFoliage = e.newValue; Changed(); }); viewOptions.Add(foliage);
             }
             preview = new TreePreview();
             preview.ShowMeshOverlay = showMeshOverlay;
             var meshOverlay = new Toggle("Mesh overlay") { value = showMeshOverlay, tooltip = "Overlay triangle edges on the shaded preview, including the current surface detail and simplification. Hide foliage to inspect the wood. Preview only; not exported." };
+            meshOverlay.AddToClassList("preview-option");
             meshOverlay.RegisterValueChangedCallback(e => { showMeshOverlay = e.newValue; preview.ShowMeshOverlay = e.newValue; previewElement?.MarkDirtyRepaint(); Repaint(); });
             viewOptions.Add(meshOverlay);
             preview.SetView(previewOrbit, previewPan);
@@ -523,26 +510,34 @@ namespace Terrainity.Editor
             preview.SetLighting(previewLighting);
             if (previewEnvironment == null) previewEnvironment = new PreviewEnvironmentSettings();
             preview.SetEnvironment(previewEnvironment);
-            var previewStage = Box(panel, "preview-stage");
+            var previewStage = builderPage.Q("previewStage");
+            var previewHost = builderPage.Q("previewImageHost");
+            previewHost.Clear();
             previewElement = new VisualElement { tooltip = category == "Trees"
                 ? "Shift-click a trunk, root, branch, or foliage card to highlight it and jump to its controls. Shift-drag still pans the view."
                 : "Drag to orbit, Shift-drag to pan, and scroll to zoom. Use Mesh overlay to inspect the rock." };
+            previewElement.style.flexGrow = 1;
+            previewHost.Add(previewElement);
             var previewImage = new IMGUIContainer(() => preview?.Draw(GUILayoutUtility.GetRect(1, 1, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true))))
             { pickingMode = PickingMode.Ignore };
             previewImage.style.flexGrow = 1;
             previewElement.Add(previewImage);
+            meshStats = new Label { name = "previewStats", pickingMode = PickingMode.Ignore };
+            meshStats.AddToClassList("preview-stats");
+            previewHost.Add(meshStats);
+            if (category == "Trees") AddFloorHeightOverlay(previewHost);
             ConfigurePreviewInput(previewElement, previewImage);
-            previewElement.AddToClassList("preview"); previewStage.Add(previewElement);
+            for (int i = previewStage.childCount - 1; i >= 1; i--) previewStage.RemoveAt(i);
             var lightingPanel = new PreviewLightingPanel(previewLighting, () => { SavePreviewPreferences(); preview.SetLighting(previewLighting); previewImage.MarkDirtyRepaint(); Repaint(); });
             lightingPanel.Add(new PreviewEnvironmentPanel(previewEnvironment, () => { SavePreviewPreferences(); preview.SetEnvironment(previewEnvironment); previewImage.MarkDirtyRepaint(); Repaint(); }));
             previewStage.Add(lightingPanel);
             lightingPanel.style.display = showPreviewLighting ? DisplayStyle.Flex : DisplayStyle.None;
             previewHeight = Mathf.Clamp(previewHeight, 180, 1600);
             previewStage.style.height = previewHeight;
-            var resizeHandle = new Label("⋯  Drag to resize preview  ⋯")
-            { tooltip = "Drag up or down to change preview height. Double-click to reset." };
-            resizeHandle.AddToClassList("preview-resize-handle");
-            panel.Add(resizeHandle);
+            var resizeHandle = builderPage.Q<Label>("previewResizeHandle");
+            if (!previewResizeBound)
+            {
+            previewResizeBound = true;
             bool resizing = false;
             float resizeStartY = 0, resizeStartHeight = 0;
             resizeHandle.RegisterCallback<MouseDownEvent>(e =>
@@ -564,7 +559,7 @@ namespace Terrainity.Editor
                 if (!resizing) return;
                 previewHeight = Mathf.Clamp(resizeStartHeight + e.mousePosition.y - resizeStartY, 180, 1600);
                 previewStage.style.height = previewHeight;
-                previewImage.MarkDirtyRepaint(); Repaint(); e.StopPropagation();
+                previewElement?.MarkDirtyRepaint(); Repaint(); e.StopPropagation();
             });
             resizeHandle.RegisterCallback<MouseUpEvent>(e =>
             {
@@ -572,17 +567,45 @@ namespace Terrainity.Editor
                 resizing = false; resizeHandle.ReleaseMouse(); e.StopPropagation();
             });
             resizeHandle.RegisterCallback<MouseCaptureOutEvent>(_ => resizing = false);
+            }
 
-            var viewButtons = Box(panel, "row");
+            var viewButtons = builderPage.Q("previewButtons");
+            viewButtons.Clear();
             var lightingToggle = new Toggle("Lighting") { value = showPreviewLighting };
+            lightingToggle.AddToClassList("preview-option");
             lightingToggle.RegisterValueChangedCallback(e => { showPreviewLighting = e.newValue; SavePreviewPreferences(); lightingPanel.style.display = e.newValue ? DisplayStyle.Flex : DisplayStyle.None; });
-            viewButtons.Add(lightingToggle);
-            var panMode = new Toggle("Pan with left mouse") { value = panWithLeftMouse };
-            panMode.RegisterValueChangedCallback(e => panWithLeftMouse = e.newValue);
-            viewButtons.Add(panMode);
+            viewOptions.Add(lightingToggle);
             Action(viewButtons, "Next sibling", () => { variant = (variant + 1) % (category == "Rocks" ? rockRecipe.variantCount : recipe.variantCount); Changed(); });
             Action(viewButtons, "Reset view", () => { preview.ResetView(); CapturePreviewView(); previewElement.MarkDirtyRepaint(); });
-            return panel;
+            var exportHost = builderPage.Q("previewExport");
+            exportHost.Clear();
+            return exportHost;
+        }
+
+        void AddFloorHeightOverlay(VisualElement previewHost)
+        {
+            var overlay = new VisualElement { tooltip = "Floor height sets the placement ground line. Positive values bury more of the tree; negative values expose more. The offset is baked into exported meshes and LODs." };
+            overlay.AddToClassList("floor-height-overlay");
+            var track = new VisualElement();
+            track.AddToClassList("floor-height-track");
+            var slider = new SliderInt(-20, 20, SliderDirection.Vertical, 1f) { value = Mathf.RoundToInt(recipe.floorHeight * 10f) };
+            slider.AddToClassList("floor-height-slider");
+            var labels = new VisualElement();
+            labels.AddToClassList("floor-height-labels");
+            labels.Add(new Label("FLOOR"));
+            var value = new Label($"{recipe.floorHeight:0.00} m");
+            labels.Add(value);
+            slider.RegisterValueChangedCallback(e =>
+            {
+                float height = e.newValue / 10f;
+                recipe.floorHeight = height;
+                value.text = $"{height:0.0} m";
+                Changed();
+            });
+            track.Add(slider);
+            overlay.Add(track);
+            overlay.Add(labels);
+            previewHost.Add(overlay);
         }
 
         void GenerateTreeFamily()
@@ -702,7 +725,7 @@ namespace Terrainity.Editor
             viewport.RegisterCallback<MouseDownEvent>(e =>
             {
                 if (dragButton != -1 || (e.button != 0 && e.button != 2)) return;
-                dragButton = e.button; pan = e.button == 2 || e.shiftKey || panWithLeftMouse; previous = pressPosition = e.mousePosition;
+                dragButton = e.button; pan = e.button == 2 || e.shiftKey; previous = pressPosition = e.mousePosition;
                 picking = e.button == 0 && e.shiftKey && category == "Trees";
                 dragged = false;
                 viewport.CaptureMouse(); e.StopPropagation();
@@ -808,21 +831,26 @@ namespace Terrainity.Editor
             if (category == "Rocks") { RockChanged(); return; }
             preview?.Build(recipe, variant);
             if (previewCaption != null) previewCaption.text = recipe.species + " / Sibling " + (variant + 1) + " of " + recipe.variantCount;
-            if (meshStats != null && preview != null) meshStats.text = $"Wood: {preview.WoodTriangles:N0} triangles • Foliage: {preview.FoliageTriangles:N0} • Total: {preview.WoodTriangles + preview.FoliageTriangles:N0}";
-            if (meshStats != null && preview != null && recipe.simplifyWood)
-                meshStats.text += $" • Wood simplified: {preview.WoodTriangles + preview.RemovedWoodTriangles:N0} → {preview.WoodTriangles:N0} ({preview.RemovedWoodTriangles:N0} removed)";
+            UpdateMeshStats("Wood");
             previewElement?.MarkDirtyRepaint();
+        }
+
+        void UpdateMeshStats(string geometryLabel)
+        {
+            if (meshStats == null || preview == null) return;
+            int vertices = preview.Meshes.Sum(mesh => mesh.vertexCount);
+            meshStats.text = $"Triangle Count: {preview.WoodTriangles + preview.FoliageTriangles:N0}\n"
+                + $"{geometryLabel}: {preview.WoodTriangles:N0} • Foliage: {preview.FoliageTriangles:N0}\n"
+                + $"Vertex Count: {vertices:N0}";
         }
 
         void BuildLibrary()
         {
-            var scroll = new ScrollView(); scroll.AddToClassList("page-scroll"); page.Add(scroll);
-            Text(scroll, "YOUR OWN LITTLE ECOSYSTEM", "eyebrow"); Text(scroll, "Generated library", "title");
-            Text(scroll, "Only finished Terrainity prefabs belong here. Select an entry to locate it in the Project window, then drag that prefab into Terrain’s Add Tree or Add Detail Mesh dialog.");
-            var toolbar = Box(scroll, "row");
+            var toolbar = libraryPage.Q("libraryToolbar");
+            toolbar.Clear();
             var search = new ToolbarSearchField(); search.AddToClassList("grow"); toolbar.Add(search);
             var filter = new PopupField<string>(new List<string> { "All types", "Trees", "Grass", "Rocks", "Bushes" }, 0); toolbar.Add(filter);
-            var list = Box(scroll, "grow");
+            var list = libraryPage.Q("libraryList");
             void Refresh()
             {
                 list.Clear();
@@ -856,10 +884,6 @@ namespace Terrainity.Editor
             }
             search.RegisterValueChangedCallback(_ => Refresh()); filter.RegisterValueChangedCallback(_ => Refresh());
             Action(toolbar, "Refresh", Refresh); Refresh();
-            var organization = Box(scroll, "card");
-            Text(organization, "Generated resources", "section-title");
-            Text(organization, "Assets / TerrainityGenerated /\n    Trees or Rocks / [Asset name] / Prefabs, Models, Recipes\n    Shared / Materials, Textures");
-            Text(organization, "Matching material settings are shared between exports. Editing a shared resource changes every asset using it. Existing exports retain their original resources.", "small");
         }
 
         bool DeleteLibraryPrefab(GameObject prefab)

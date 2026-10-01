@@ -1,17 +1,19 @@
-.terrainity { flex-grow: 1; background-color: #19211f; color: #e4ebe5; }
-.header { padding: 22px 26px 16px; flex-direction: row; align-items: center; }
+.terrainity { flex-grow: 1; min-height: 0; background-color: #19211f; color: #e4ebe5; }
+.header { flex-shrink: 0; padding: 22px 26px 16px; flex-direction: row; align-items: center; }
 .brand { font-size: 24px; -unity-font-style: bold; color: #d9ecc4; }
 .eyebrow { font-size: 10px; color: #a9c18e; margin-bottom: 7px; letter-spacing: 2px; }
 .subtitle { color: #a3b2aa; margin-top: 5px; white-space: normal; }
+.release-summary { color: #c5d9ac; margin-top: 4px; white-space: normal; }
 .grow { flex-grow: 1; }
 .badge { background-color: #303e32; color: #c5d9ac; padding: 6px 10px; border-radius: 5px; }
-.tabs { flex-direction: row; padding: 0 24px 12px; border-bottom-width: 1px; border-bottom-color: #39443d; }
+.tabs { flex-shrink: 0; flex-direction: row; padding: 0 24px 12px; border-bottom-width: 1px; border-bottom-color: #39443d; }
 .terrainity Button { background-color: #303d36; color: #e4ebe5; border-width: 1px; border-color: #48574b; border-radius: 5px; padding: 7px 12px; margin: 3px; }
 .terrainity Button:hover { background-color: #455643; }
 .terrainity Button:disabled { color: #95a098; background-color: #29312d; }
 .tabs Button { padding: 9px 22px; }
 .terrainity .selected, .terrainity .primary { background-color: #b5cf8a; color: #1b2919; border-color: #b5cf8a; -unity-font-style: bold; }
 .page { flex-grow: 1; min-height: 0; }
+.hidden { display: none; }
 .page-scroll { flex-grow: 1; padding: 20px 24px; }
 .hero { padding: 24px; background-color: #26372b; border-radius: 8px; margin-bottom: 18px; }
 .title { font-size: 27px; -unity-font-style: bold; white-space: normal; margin-bottom: 12px; }
@@ -26,13 +28,24 @@
 .parameter-divider { width: 8px; flex-shrink: 0; background-color: #303e34; cursor: resize-horizontal; border-left-width: 1px; border-right-width: 1px; border-left-color: #39443d; border-right-color: #39443d; }
 .parameter-divider:hover { background-color: #788b72; }
 .preview-panel { flex-grow: 1; flex-basis: 0; min-width: 220px; padding: 18px; }
-.preview { height: 320px; flex-shrink: 0; background-color: #202923; border-radius: 8px; }
+.preview { position: relative; height: 320px; flex-shrink: 0; background-color: #202923; border-radius: 8px; }
+.preview-stats { position: absolute; right: 10px; bottom: 10px; max-width: 90%; color: #ffffff; font-size: 11px; -unity-text-align: lower-right; white-space: normal; }
+.floor-height-overlay { position: absolute; left: 12px; bottom: 12px; height: 25%; min-height: 45px; flex-direction: row; align-items: flex-end; opacity: 0.1; }
+.floor-height-overlay:hover { opacity: 0.8; }
+.floor-height-track { height: 100%; padding: 12px 5px 8px; background-color: #26372b; border-width: 1px; border-color: #788b72; border-radius: 8px; }
+.terrainity .floor-height-slider { width: 18px; flex-grow: 1; min-height: 0; margin: 0; }
+.floor-height-slider .unity-base-slider__tracker { background-color: #455643; }
+.floor-height-slider .unity-base-slider__dragger { background-color: #b5cf8a; }
+.floor-height-labels { margin-left: 6px; color: #d9ecc4; font-size: 10px; -unity-font-style: bold; }
 .preview-resize-handle { height: 22px; flex-shrink: 0; margin-top: 3px; margin-bottom: 5px; -unity-text-align: middle-center; font-size: 10px; color: #9dad9f; background-color: #26332b; border-radius: 4px; cursor: resize-vertical; }
 .preview-resize-handle:hover { background-color: #394b3e; color: #d3ddd5; }
 .preview-panel Label, .preview-panel Button, .preview-panel .row, .preview-panel .card { flex-shrink: 0; }
-.footer { padding: 10px 24px; background-color: #151c18; color: #a3b2aa; border-top-width: 1px; border-top-color: #39443d; white-space: normal; }
+.footer { flex-shrink: 0; padding: 10px 24px; background-color: #151c18; color: #a3b2aa; border-top-width: 1px; border-top-color: #39443d; white-space: normal; }
 .terrainity .unity-base-field { margin-top: 5px; margin-bottom: 8px; }
 .terrainity .unity-base-field__label { min-width: 118px; color: #d3ddd5; }
+.terrainity .preview-option { flex-direction: row-reverse; flex-grow: 0; margin-right: 14px; }
+.terrainity .preview-option .unity-base-field__label { min-width: 0; width: auto; margin-left: 5px; margin-right: 0; }
+.terrainity .preview-option .unity-base-field__input { flex-grow: 0; }
 .terrainity Foldout { margin-top: 14px; margin-bottom: 8px; }
 .terrainity .unity-foldout__text { color: #c6d5be; -unity-font-style: bold; }
 .small { font-size: 11px; color: #9dad9f; white-space: normal; margin-top: 8px; margin-bottom: 8px; }
