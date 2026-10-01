@@ -1,0 +1,31 @@
+{
+  "format": "terrainity.family",
+  "version": 1,
+  "profile": {
+    "id": "pine",
+    "name": "Pine",
+    "description": "Pine growth profile. Edit the family JSON to customize its growth rules.",
+    "limbsPerWhorl": 4,
+    "whorlRotation": 31,
+    "branchRotation": 137.508,
+    "crownTipScale": 0.18,
+    "lift": 0.22,
+    "liftExponent": 2,
+    "forkAngle": 48,
+    "childLengthScale": 0.48,
+    "foliageAspect": 0.65,
+    "branches": {
+      "depth": 3,
+      "minDepth": -1,
+      "subBranches": 2,
+      "sharpness": 0,
+      "limbs": 16,
+      "spread": 1,
+      "bend": 0.25,
+      "angle": 75,
+      "upperAngleBias": 20,
+      "droop": 0.4,
+      "thickness": 0.4
+    }
+  }
+}

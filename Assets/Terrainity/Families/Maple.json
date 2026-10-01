@@ -1,0 +1,31 @@
+{
+  "format": "terrainity.family",
+  "version": 1,
+  "profile": {
+    "id": "maple",
+    "name": "Maple",
+    "description": "Maple growth profile. Edit the family JSON to customize its growth rules.",
+    "limbsPerWhorl": 1,
+    "whorlRotation": 31,
+    "branchRotation": 137.508,
+    "crownTipScale": 0.55,
+    "lift": 0.23,
+    "liftExponent": 2,
+    "forkAngle": 65,
+    "childLengthScale": 0.45,
+    "foliageAspect": 1,
+    "branches": {
+      "depth": 3,
+      "minDepth": -1,
+      "subBranches": 2,
+      "sharpness": 0,
+      "limbs": 9,
+      "spread": 0.9,
+      "bend": 0.45,
+      "angle": 52,
+      "upperAngleBias": 23,
+      "droop": 0.5,
+      "thickness": 0.55
+    }
+  }
+}

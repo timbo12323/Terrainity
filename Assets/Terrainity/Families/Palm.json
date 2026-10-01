@@ -1,0 +1,208 @@
+{
+  "format": "terrainity.family",
+  "version": 1,
+  "profile": {
+    "id": "palm",
+    "name": "Palm",
+    "description": "Canary Island date palm (Phoenix canariensis): stout unbranched trunk and a terminal crown of arching feather fronds. Card size controls frond width; card count, fan and cluster controls apply to card families.",
+    "limbsPerWhorl": 1,
+    "whorlRotation": 31,
+    "branchRotation": 137.508,
+    "crownTipScale": 1,
+    "lift": -0.35,
+    "liftExponent": 2.8,
+    "forkAngle": 0,
+    "childLengthScale": 0.3,
+    "foliageAspect": 1,
+    "branches": {
+      "limbs": 24,
+      "depth": 0,
+      "minDepth": 0,
+      "subBranches": 1,
+      "spread": 1,
+      "bend": 0.6,
+      "sharpness": 0,
+      "angle": 95,
+      "upperAngleBias": 45,
+      "droop": 0.12,
+      "thickness": 0.1
+    },
+    "crownEnd": 0.99,
+    "foliageForm": 2
+  },
+  "defaults": {
+    "format": "terrainity.recipe",
+    "version": 1,
+    "settings": {
+      "assetName": "Palm Tree",
+      "species": "Palm",
+      "seed": 1842,
+      "height": 9,
+      "trunkRadius": 0.48,
+      "taper": 0.18,
+      "lean": 0.08,
+      "trunkBend": 0.08,
+      "trunkBends": 1,
+      "trunkSharpness": 0,
+      "trunkTwist": 8,
+      "crownWidth": 8,
+      "crownStart": 0.93,
+      "layers": 12,
+      "trunkSides": 10,
+      "trunkSegments": 16,
+      "branchSides": 5,
+      "branchSegments": 6,
+      "foliageCards": 3,
+      "foliageSize": 1.35,
+      "foliageSpread": 0.2,
+      "foliageCutoff": 0.5,
+      "foliageStemAttached": true,
+      "foliageStemPivot": {
+        "x": 0.5,
+        "y": 0
+      },
+      "foliageRotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "foliageFanAngle": 18,
+      "irregularity": 0.14,
+      "bark": {
+        "r": 0.49,
+        "g": 0.4,
+        "b": 0.27,
+        "a": 1
+      },
+      "leaves": {
+        "r": 0.22,
+        "g": 0.37,
+        "b": 0.13,
+        "a": 1
+      },
+      "barkTilingAround": 1,
+      "barkTilingLength": 1,
+      "foliageRoughness": 1,
+      "foliageHighlights": false,
+      "foliageReflections": false,
+      "barkRoughness": 0.95,
+      "barkHighlights": false,
+      "barkReflections": false,
+      "foliageGradientEnabled": true,
+      "foliageTintMode": 2,
+      "variantCount": 1,
+      "variation": 0.08,
+      "showFoliage": true,
+      "customBranches": {
+        "limbs": 24,
+        "depth": 0,
+        "minDepth": 0,
+        "subBranches": 1,
+        "spread": 1,
+        "bend": 0.6,
+        "sharpness": 0,
+        "angle": 95,
+        "upperAngleBias": 45,
+        "droop": 0.12,
+        "thickness": 0.1
+      },
+      "barkGradientEnabled": false
+    },
+    "family": {
+      "id": "palm",
+      "name": "Palm",
+      "description": "Canary Island date palm (Phoenix canariensis): stout unbranched trunk and a terminal crown of arching feather fronds. Card size controls frond width; card count, fan and cluster controls apply to card families.",
+      "limbsPerWhorl": 1,
+      "whorlRotation": 31,
+      "branchRotation": 137.508,
+      "crownTipScale": 1,
+      "lift": -0.35,
+      "liftExponent": 2.8,
+      "forkAngle": 0,
+      "childLengthScale": 0.3,
+      "foliageAspect": 1,
+      "branches": {
+        "limbs": 24,
+        "depth": 0,
+        "minDepth": 0,
+        "subBranches": 1,
+        "spread": 1,
+        "bend": 0.6,
+        "sharpness": 0,
+        "angle": 95,
+        "upperAngleBias": 45,
+        "droop": 0.12,
+        "thickness": 0.1
+      },
+      "crownEnd": 0.99,
+      "foliageForm": 2
+    },
+    "foliageGradient": {
+      "colors": [
+        {
+          "color": {
+            "r": 0.22,
+            "g": 0.37,
+            "b": 0.13,
+            "a": 1
+          },
+          "time": 0
+        },
+        {
+          "color": {
+            "r": 0.52,
+            "g": 0.62,
+            "b": 0.25,
+            "a": 1
+          },
+          "time": 1
+        }
+      ],
+      "alpha": [
+        {
+          "alpha": 1,
+          "time": 0
+        },
+        {
+          "alpha": 1,
+          "time": 1
+        }
+      ],
+      "mode": 0
+    },
+    "sibling": 0,
+    "barkGradient": {
+      "colors": [
+        {
+          "color": {
+            "r": 0.3185,
+            "g": 0.26,
+            "b": 0.17550000000000002,
+            "a": 1
+          },
+          "time": 0
+        },
+        {
+          "color": {
+            "r": 0.49,
+            "g": 0.4,
+            "b": 0.27,
+            "a": 1
+          },
+          "time": 1
+        }
+      ],
+      "alpha": [
+        {
+          "alpha": 1,
+          "time": 0
+        },
+        {
+          "alpha": 1,
+          "time": 1
+        }
+      ],
+      "mode": 0
+    }
+  }
+}

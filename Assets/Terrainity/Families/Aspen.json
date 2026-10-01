@@ -1,0 +1,208 @@
+{
+  "format": "terrainity.family",
+  "version": 1,
+  "profile": {
+    "id": "aspen",
+    "name": "Aspen",
+    "description": "Quaking aspen (Populus tremuloides): pale slender trunk with an elevated, open rounded crown.",
+    "limbsPerWhorl": 1,
+    "whorlRotation": 31,
+    "branchRotation": 137.508,
+    "crownTipScale": 0.65,
+    "lift": 0.16,
+    "liftExponent": 2,
+    "forkAngle": 38,
+    "childLengthScale": 0.5,
+    "foliageAspect": 1,
+    "branches": {
+      "limbs": 11,
+      "depth": 3,
+      "minDepth": 2,
+      "subBranches": 3,
+      "spread": 1,
+      "bend": 0.3,
+      "sharpness": 0,
+      "angle": 45,
+      "upperAngleBias": 12,
+      "droop": 0.18,
+      "thickness": 0.38
+    },
+    "crownEnd": 0.94,
+    "foliageForm": 0
+  },
+  "defaults": {
+    "format": "terrainity.recipe",
+    "version": 1,
+    "settings": {
+      "assetName": "Aspen Tree",
+      "species": "Aspen",
+      "seed": 1842,
+      "height": 12,
+      "trunkRadius": 0.21,
+      "taper": 0.78,
+      "lean": 0.08,
+      "trunkBend": 0.03,
+      "trunkBends": 1,
+      "trunkSharpness": 0,
+      "trunkTwist": 8,
+      "crownWidth": 4.5,
+      "crownStart": 0.48,
+      "layers": 12,
+      "trunkSides": 10,
+      "trunkSegments": 16,
+      "branchSides": 5,
+      "branchSegments": 6,
+      "foliageCards": 3,
+      "foliageSize": 0.85,
+      "foliageSpread": 0.2,
+      "foliageCutoff": 0.5,
+      "foliageStemAttached": false,
+      "foliageStemPivot": {
+        "x": 0.5,
+        "y": 0
+      },
+      "foliageRotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "foliageFanAngle": 18,
+      "irregularity": 0.14,
+      "bark": {
+        "r": 0.84,
+        "g": 0.85,
+        "b": 0.74,
+        "a": 1
+      },
+      "leaves": {
+        "r": 0.26,
+        "g": 0.46,
+        "b": 0.16,
+        "a": 1
+      },
+      "barkTilingAround": 1,
+      "barkTilingLength": 1,
+      "foliageRoughness": 1,
+      "foliageHighlights": false,
+      "foliageReflections": false,
+      "barkRoughness": 0.95,
+      "barkHighlights": false,
+      "barkReflections": false,
+      "foliageGradientEnabled": true,
+      "foliageTintMode": 1,
+      "variantCount": 1,
+      "variation": 0.08,
+      "showFoliage": true,
+      "customBranches": {
+        "limbs": 11,
+        "depth": 3,
+        "minDepth": 2,
+        "subBranches": 3,
+        "spread": 1,
+        "bend": 0.3,
+        "sharpness": 0,
+        "angle": 45,
+        "upperAngleBias": 12,
+        "droop": 0.18,
+        "thickness": 0.38
+      },
+      "barkGradientEnabled": false
+    },
+    "family": {
+      "id": "aspen",
+      "name": "Aspen",
+      "description": "Quaking aspen (Populus tremuloides): pale slender trunk with an elevated, open rounded crown.",
+      "limbsPerWhorl": 1,
+      "whorlRotation": 31,
+      "branchRotation": 137.508,
+      "crownTipScale": 0.65,
+      "lift": 0.16,
+      "liftExponent": 2,
+      "forkAngle": 38,
+      "childLengthScale": 0.5,
+      "foliageAspect": 1,
+      "branches": {
+        "limbs": 11,
+        "depth": 3,
+        "minDepth": 2,
+        "subBranches": 3,
+        "spread": 1,
+        "bend": 0.3,
+        "sharpness": 0,
+        "angle": 45,
+        "upperAngleBias": 12,
+        "droop": 0.18,
+        "thickness": 0.38
+      },
+      "crownEnd": 0.94,
+      "foliageForm": 0
+    },
+    "foliageGradient": {
+      "colors": [
+        {
+          "color": {
+            "r": 0.26,
+            "g": 0.46,
+            "b": 0.16,
+            "a": 1
+          },
+          "time": 0
+        },
+        {
+          "color": {
+            "r": 0.62,
+            "g": 0.71,
+            "b": 0.31,
+            "a": 1
+          },
+          "time": 1
+        }
+      ],
+      "alpha": [
+        {
+          "alpha": 1,
+          "time": 0
+        },
+        {
+          "alpha": 1,
+          "time": 1
+        }
+      ],
+      "mode": 0
+    },
+    "sibling": 0,
+    "barkGradient": {
+      "colors": [
+        {
+          "color": {
+            "r": 0.546,
+            "g": 0.5525,
+            "b": 0.481,
+            "a": 1
+          },
+          "time": 0
+        },
+        {
+          "color": {
+            "r": 0.84,
+            "g": 0.85,
+            "b": 0.74,
+            "a": 1
+          },
+          "time": 1
+        }
+      ],
+      "alpha": [
+        {
+          "alpha": 1,
+          "time": 0
+        },
+        {
+          "alpha": 1,
+          "time": 1
+        }
+      ],
+      "mode": 0
+    }
+  }
+}

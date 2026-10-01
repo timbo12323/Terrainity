@@ -1,0 +1,208 @@
+{
+  "format": "terrainity.family",
+  "version": 1,
+  "profile": {
+    "id": "spruce",
+    "name": "Spruce",
+    "description": "Norway spruce (Picea abies): pointed conical crown, tiered limbs and drooping secondary needle sprays.",
+    "limbsPerWhorl": 4,
+    "whorlRotation": 31,
+    "branchRotation": 137.508,
+    "crownTipScale": 0.1,
+    "lift": -0.12,
+    "liftExponent": 2.8,
+    "forkAngle": 52,
+    "childLengthScale": 0.48,
+    "foliageAspect": 1,
+    "branches": {
+      "limbs": 24,
+      "depth": 3,
+      "minDepth": 3,
+      "subBranches": 3,
+      "spread": 1,
+      "bend": 0.35,
+      "sharpness": 0,
+      "angle": 88,
+      "upperAngleBias": 22,
+      "droop": 0.22,
+      "thickness": 0.48
+    },
+    "crownEnd": 0.94,
+    "foliageForm": 1
+  },
+  "defaults": {
+    "format": "terrainity.recipe",
+    "version": 1,
+    "settings": {
+      "assetName": "Spruce Tree",
+      "species": "Spruce",
+      "seed": 1842,
+      "height": 12,
+      "trunkRadius": 0.28,
+      "taper": 0.78,
+      "lean": 0.08,
+      "trunkBend": 0.03,
+      "trunkBends": 1,
+      "trunkSharpness": 0,
+      "trunkTwist": 8,
+      "crownWidth": 5.2,
+      "crownStart": 0.3,
+      "layers": 12,
+      "trunkSides": 10,
+      "trunkSegments": 16,
+      "branchSides": 5,
+      "branchSegments": 6,
+      "foliageCards": 3,
+      "foliageSize": 0.8,
+      "foliageSpread": 0.2,
+      "foliageCutoff": 0.35,
+      "foliageStemAttached": true,
+      "foliageStemPivot": {
+        "x": 0.5,
+        "y": 0
+      },
+      "foliageRotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "foliageFanAngle": 18,
+      "irregularity": 0.14,
+      "bark": {
+        "r": 0.34,
+        "g": 0.27,
+        "b": 0.2,
+        "a": 1
+      },
+      "leaves": {
+        "r": 0.11,
+        "g": 0.25,
+        "b": 0.14,
+        "a": 1
+      },
+      "barkTilingAround": 1,
+      "barkTilingLength": 1,
+      "foliageRoughness": 1,
+      "foliageHighlights": false,
+      "foliageReflections": false,
+      "barkRoughness": 0.95,
+      "barkHighlights": false,
+      "barkReflections": false,
+      "foliageGradientEnabled": true,
+      "foliageTintMode": 1,
+      "variantCount": 1,
+      "variation": 0.08,
+      "showFoliage": true,
+      "customBranches": {
+        "limbs": 24,
+        "depth": 3,
+        "minDepth": 3,
+        "subBranches": 3,
+        "spread": 1,
+        "bend": 0.35,
+        "sharpness": 0,
+        "angle": 88,
+        "upperAngleBias": 22,
+        "droop": 0.22,
+        "thickness": 0.48
+      },
+      "barkGradientEnabled": false
+    },
+    "family": {
+      "id": "spruce",
+      "name": "Spruce",
+      "description": "Norway spruce (Picea abies): pointed conical crown, tiered limbs and drooping secondary needle sprays.",
+      "limbsPerWhorl": 4,
+      "whorlRotation": 31,
+      "branchRotation": 137.508,
+      "crownTipScale": 0.1,
+      "lift": -0.12,
+      "liftExponent": 2.8,
+      "forkAngle": 52,
+      "childLengthScale": 0.48,
+      "foliageAspect": 1,
+      "branches": {
+        "limbs": 24,
+        "depth": 3,
+        "minDepth": 3,
+        "subBranches": 3,
+        "spread": 1,
+        "bend": 0.35,
+        "sharpness": 0,
+        "angle": 88,
+        "upperAngleBias": 22,
+        "droop": 0.22,
+        "thickness": 0.48
+      },
+      "crownEnd": 0.94,
+      "foliageForm": 1
+    },
+    "foliageGradient": {
+      "colors": [
+        {
+          "color": {
+            "r": 0.11,
+            "g": 0.25,
+            "b": 0.14,
+            "a": 1
+          },
+          "time": 0
+        },
+        {
+          "color": {
+            "r": 0.31,
+            "g": 0.44,
+            "b": 0.24,
+            "a": 1
+          },
+          "time": 1
+        }
+      ],
+      "alpha": [
+        {
+          "alpha": 1,
+          "time": 0
+        },
+        {
+          "alpha": 1,
+          "time": 1
+        }
+      ],
+      "mode": 0
+    },
+    "sibling": 0,
+    "barkGradient": {
+      "colors": [
+        {
+          "color": {
+            "r": 0.22100000000000003,
+            "g": 0.17550000000000002,
+            "b": 0.13,
+            "a": 1
+          },
+          "time": 0
+        },
+        {
+          "color": {
+            "r": 0.34,
+            "g": 0.27,
+            "b": 0.2,
+            "a": 1
+          },
+          "time": 1
+        }
+      ],
+      "alpha": [
+        {
+          "alpha": 1,
+          "time": 0
+        },
+        {
+          "alpha": 1,
+          "time": 1
+        }
+      ],
+      "mode": 0
+    }
+  }
+}

@@ -1,0 +1,203 @@
+{
+  "format": "terrainity.family",
+  "version": 1,
+  "profile": {
+    "id": "willow",
+    "name": "Willow",
+    "description": "Weeping willow: broad rounded crown, arching scaffold limbs and long pendulous shoots. Smooth curves and narrow forks form hanging foliage curtains.",
+    "limbsPerWhorl": 1,
+    "whorlRotation": 31,
+    "branchRotation": 137.508,
+    "crownTipScale": 0.72,
+    "lift": -0.38,
+    "liftExponent": 2.8,
+    "forkAngle": 18,
+    "childLengthScale": 0.55,
+    "foliageAspect": 1,
+    "branches": {
+      "limbs": 14,
+      "depth": 3,
+      "minDepth": 2,
+      "subBranches": 3,
+      "spread": 1.05,
+      "bend": 0.75,
+      "sharpness": 0,
+      "angle": 65,
+      "upperAngleBias": 25,
+      "droop": 0.3,
+      "thickness": 0.65
+    }
+  },
+  "defaults": {
+    "format": "terrainity.recipe",
+    "version": 1,
+    "settings": {
+      "assetName": "Weeping Willow",
+      "species": "Willow",
+      "seed": 1842,
+      "height": 9,
+      "trunkRadius": 0.45,
+      "taper": 0.82,
+      "lean": 0.16,
+      "trunkBend": 0.16,
+      "trunkBends": 1,
+      "trunkSharpness": 0,
+      "trunkTwist": 12,
+      "crownWidth": 7,
+      "crownStart": 0.65,
+      "layers": 12,
+      "trunkSides": 10,
+      "trunkSegments": 18,
+      "branchSides": 5,
+      "branchSegments": 8,
+      "foliageCards": 3,
+      "foliageSize": 0.6,
+      "foliageSpread": 0.12,
+      "foliageCutoff": 0.5,
+      "foliageStemAttached": true,
+      "foliageStemPivot": {
+        "x": 0.5,
+        "y": 0
+      },
+      "foliageRotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "foliageFanAngle": 8,
+      "irregularity": 0.16,
+      "bark": {
+        "r": 0.36,
+        "g": 0.32,
+        "b": 0.25,
+        "a": 1
+      },
+      "leaves": {
+        "r": 0.53,
+        "g": 0.65,
+        "b": 0.25,
+        "a": 1
+      },
+      "barkTilingAround": 2,
+      "barkTilingLength": 1.4,
+      "foliageRoughness": 1,
+      "foliageHighlights": false,
+      "foliageReflections": false,
+      "barkRoughness": 0.95,
+      "barkHighlights": false,
+      "barkReflections": false,
+      "foliageGradientEnabled": true,
+      "foliageTintMode": 1,
+      "variantCount": 1,
+      "variation": 0.08,
+      "showFoliage": true,
+      "customBranches": {
+        "limbs": 14,
+        "depth": 3,
+        "minDepth": 2,
+        "subBranches": 3,
+        "spread": 1.05,
+        "bend": 0.75,
+        "sharpness": 0,
+        "angle": 65,
+        "upperAngleBias": 25,
+        "droop": 0.3,
+        "thickness": 0.65
+      }
+    },
+    "family": {
+      "id": "willow",
+      "name": "Willow",
+      "description": "Weeping willow: broad rounded crown, arching scaffold limbs and long pendulous shoots. Smooth curves and narrow forks form hanging foliage curtains.",
+      "limbsPerWhorl": 1,
+      "whorlRotation": 31,
+      "branchRotation": 137.508,
+      "crownTipScale": 0.72,
+      "lift": -0.38,
+      "liftExponent": 2.8,
+      "forkAngle": 18,
+      "childLengthScale": 0.55,
+      "foliageAspect": 1,
+      "branches": {
+        "limbs": 14,
+        "depth": 3,
+        "minDepth": 2,
+        "subBranches": 3,
+        "spread": 1.05,
+        "bend": 0.75,
+        "sharpness": 0,
+        "angle": 65,
+        "upperAngleBias": 25,
+        "droop": 0.3,
+        "thickness": 0.65
+      }
+    },
+    "foliageGradient": {
+      "colors": [
+        {
+          "color": {
+            "r": 0.34,
+            "g": 0.48,
+            "b": 0.16,
+            "a": 1
+          },
+          "time": 0
+        },
+        {
+          "color": {
+            "r": 0.7,
+            "g": 0.76,
+            "b": 0.34,
+            "a": 1
+          },
+          "time": 1
+        }
+      ],
+      "alpha": [
+        {
+          "alpha": 1,
+          "time": 0
+        },
+        {
+          "alpha": 1,
+          "time": 1
+        }
+      ],
+      "mode": 0
+    },
+    "sibling": 0,
+    "barkGradient": {
+      "colors": [
+        {
+          "color": {
+            "r": 0.36,
+            "g": 0.32,
+            "b": 0.25,
+            "a": 1
+          },
+          "time": 0
+        },
+        {
+          "color": {
+            "r": 0.5,
+            "g": 0.47,
+            "b": 0.4,
+            "a": 1
+          },
+          "time": 1
+        }
+      ],
+      "alpha": [
+        {
+          "alpha": 1,
+          "time": 0
+        },
+        {
+          "alpha": 1,
+          "time": 1
+        }
+      ],
+      "mode": 0
+    }
+  }
+}

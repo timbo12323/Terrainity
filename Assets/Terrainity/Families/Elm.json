@@ -1,0 +1,208 @@
+{
+  "format": "terrainity.family",
+  "version": 1,
+  "profile": {
+    "id": "elm",
+    "name": "Elm",
+    "description": "American elm (Ulmus americana): ascending scaffold limbs opening into a spreading vase-shaped crown.",
+    "limbsPerWhorl": 1,
+    "whorlRotation": 31,
+    "branchRotation": 137.508,
+    "crownTipScale": 1.1,
+    "lift": -0.12,
+    "liftExponent": 2.8,
+    "forkAngle": 32,
+    "childLengthScale": 0.6,
+    "foliageAspect": 1,
+    "branches": {
+      "limbs": 9,
+      "depth": 3,
+      "minDepth": 3,
+      "subBranches": 3,
+      "spread": 1,
+      "bend": 0.55,
+      "sharpness": 0,
+      "angle": 28,
+      "upperAngleBias": 0,
+      "droop": 0.2,
+      "thickness": 0.72
+    },
+    "crownEnd": 0.94,
+    "foliageForm": 0
+  },
+  "defaults": {
+    "format": "terrainity.recipe",
+    "version": 1,
+    "settings": {
+      "assetName": "Elm Tree",
+      "species": "Elm",
+      "seed": 1842,
+      "height": 10,
+      "trunkRadius": 0.5,
+      "taper": 0.78,
+      "lean": 0.08,
+      "trunkBend": 0.08,
+      "trunkBends": 1,
+      "trunkSharpness": 0,
+      "trunkTwist": 8,
+      "crownWidth": 7,
+      "crownStart": 0.32,
+      "layers": 12,
+      "trunkSides": 10,
+      "trunkSegments": 16,
+      "branchSides": 5,
+      "branchSegments": 6,
+      "foliageCards": 3,
+      "foliageSize": 0.7,
+      "foliageSpread": 0.2,
+      "foliageCutoff": 0.5,
+      "foliageStemAttached": false,
+      "foliageStemPivot": {
+        "x": 0.5,
+        "y": 0
+      },
+      "foliageRotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "foliageFanAngle": 18,
+      "irregularity": 0.14,
+      "bark": {
+        "r": 0.37,
+        "g": 0.31,
+        "b": 0.23,
+        "a": 1
+      },
+      "leaves": {
+        "r": 0.17,
+        "g": 0.33,
+        "b": 0.12,
+        "a": 1
+      },
+      "barkTilingAround": 1,
+      "barkTilingLength": 1,
+      "foliageRoughness": 1,
+      "foliageHighlights": false,
+      "foliageReflections": false,
+      "barkRoughness": 0.95,
+      "barkHighlights": false,
+      "barkReflections": false,
+      "foliageGradientEnabled": true,
+      "foliageTintMode": 1,
+      "variantCount": 1,
+      "variation": 0.08,
+      "showFoliage": true,
+      "customBranches": {
+        "limbs": 9,
+        "depth": 3,
+        "minDepth": 3,
+        "subBranches": 3,
+        "spread": 1,
+        "bend": 0.55,
+        "sharpness": 0,
+        "angle": 28,
+        "upperAngleBias": 0,
+        "droop": 0.2,
+        "thickness": 0.72
+      },
+      "barkGradientEnabled": false
+    },
+    "family": {
+      "id": "elm",
+      "name": "Elm",
+      "description": "American elm (Ulmus americana): ascending scaffold limbs opening into a spreading vase-shaped crown.",
+      "limbsPerWhorl": 1,
+      "whorlRotation": 31,
+      "branchRotation": 137.508,
+      "crownTipScale": 1.1,
+      "lift": -0.12,
+      "liftExponent": 2.8,
+      "forkAngle": 32,
+      "childLengthScale": 0.6,
+      "foliageAspect": 1,
+      "branches": {
+        "limbs": 9,
+        "depth": 3,
+        "minDepth": 3,
+        "subBranches": 3,
+        "spread": 1,
+        "bend": 0.55,
+        "sharpness": 0,
+        "angle": 28,
+        "upperAngleBias": 0,
+        "droop": 0.2,
+        "thickness": 0.72
+      },
+      "crownEnd": 0.94,
+      "foliageForm": 0
+    },
+    "foliageGradient": {
+      "colors": [
+        {
+          "color": {
+            "r": 0.17,
+            "g": 0.33,
+            "b": 0.12,
+            "a": 1
+          },
+          "time": 0
+        },
+        {
+          "color": {
+            "r": 0.45,
+            "g": 0.57,
+            "b": 0.25,
+            "a": 1
+          },
+          "time": 1
+        }
+      ],
+      "alpha": [
+        {
+          "alpha": 1,
+          "time": 0
+        },
+        {
+          "alpha": 1,
+          "time": 1
+        }
+      ],
+      "mode": 0
+    },
+    "sibling": 0,
+    "barkGradient": {
+      "colors": [
+        {
+          "color": {
+            "r": 0.2405,
+            "g": 0.2015,
+            "b": 0.14950000000000002,
+            "a": 1
+          },
+          "time": 0
+        },
+        {
+          "color": {
+            "r": 0.37,
+            "g": 0.31,
+            "b": 0.23,
+            "a": 1
+          },
+          "time": 1
+        }
+      ],
+      "alpha": [
+        {
+          "alpha": 1,
+          "time": 0
+        },
+        {
+          "alpha": 1,
+          "time": 1
+        }
+      ],
+      "mode": 0
+    }
+  }
+}

@@ -1,0 +1,208 @@
+{
+  "format": "terrainity.family",
+  "version": 1,
+  "profile": {
+    "id": "cedar",
+    "name": "Cedar",
+    "description": "Deodar cedar (Cedrus deodara): broad layered pyramid, spreading limbs and softly drooping blue-green sprays.",
+    "limbsPerWhorl": 3,
+    "whorlRotation": 31,
+    "branchRotation": 137.508,
+    "crownTipScale": 0.27,
+    "lift": -0.18,
+    "liftExponent": 2.8,
+    "forkAngle": 48,
+    "childLengthScale": 0.52,
+    "foliageAspect": 1,
+    "branches": {
+      "limbs": 21,
+      "depth": 3,
+      "minDepth": 2,
+      "subBranches": 3,
+      "spread": 1,
+      "bend": 0.45,
+      "sharpness": 0,
+      "angle": 82,
+      "upperAngleBias": 18,
+      "droop": 0.25,
+      "thickness": 0.6
+    },
+    "crownEnd": 0.94,
+    "foliageForm": 1
+  },
+  "defaults": {
+    "format": "terrainity.recipe",
+    "version": 1,
+    "settings": {
+      "assetName": "Cedar Tree",
+      "species": "Cedar",
+      "seed": 1842,
+      "height": 12,
+      "trunkRadius": 0.4,
+      "taper": 0.78,
+      "lean": 0.08,
+      "trunkBend": 0.08,
+      "trunkBends": 1,
+      "trunkSharpness": 0,
+      "trunkTwist": 8,
+      "crownWidth": 7,
+      "crownStart": 0.42,
+      "layers": 12,
+      "trunkSides": 10,
+      "trunkSegments": 16,
+      "branchSides": 5,
+      "branchSegments": 6,
+      "foliageCards": 3,
+      "foliageSize": 0.7,
+      "foliageSpread": 0.2,
+      "foliageCutoff": 0.35,
+      "foliageStemAttached": true,
+      "foliageStemPivot": {
+        "x": 0.5,
+        "y": 0
+      },
+      "foliageRotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "foliageFanAngle": 18,
+      "irregularity": 0.14,
+      "bark": {
+        "r": 0.4,
+        "g": 0.31,
+        "b": 0.22,
+        "a": 1
+      },
+      "leaves": {
+        "r": 0.2,
+        "g": 0.35,
+        "b": 0.28,
+        "a": 1
+      },
+      "barkTilingAround": 1,
+      "barkTilingLength": 1,
+      "foliageRoughness": 1,
+      "foliageHighlights": false,
+      "foliageReflections": false,
+      "barkRoughness": 0.95,
+      "barkHighlights": false,
+      "barkReflections": false,
+      "foliageGradientEnabled": true,
+      "foliageTintMode": 1,
+      "variantCount": 1,
+      "variation": 0.08,
+      "showFoliage": true,
+      "customBranches": {
+        "limbs": 21,
+        "depth": 3,
+        "minDepth": 2,
+        "subBranches": 3,
+        "spread": 1,
+        "bend": 0.45,
+        "sharpness": 0,
+        "angle": 82,
+        "upperAngleBias": 18,
+        "droop": 0.25,
+        "thickness": 0.6
+      },
+      "barkGradientEnabled": false
+    },
+    "family": {
+      "id": "cedar",
+      "name": "Cedar",
+      "description": "Deodar cedar (Cedrus deodara): broad layered pyramid, spreading limbs and softly drooping blue-green sprays.",
+      "limbsPerWhorl": 3,
+      "whorlRotation": 31,
+      "branchRotation": 137.508,
+      "crownTipScale": 0.27,
+      "lift": -0.18,
+      "liftExponent": 2.8,
+      "forkAngle": 48,
+      "childLengthScale": 0.52,
+      "foliageAspect": 1,
+      "branches": {
+        "limbs": 21,
+        "depth": 3,
+        "minDepth": 2,
+        "subBranches": 3,
+        "spread": 1,
+        "bend": 0.45,
+        "sharpness": 0,
+        "angle": 82,
+        "upperAngleBias": 18,
+        "droop": 0.25,
+        "thickness": 0.6
+      },
+      "crownEnd": 0.94,
+      "foliageForm": 1
+    },
+    "foliageGradient": {
+      "colors": [
+        {
+          "color": {
+            "r": 0.2,
+            "g": 0.35,
+            "b": 0.28,
+            "a": 1
+          },
+          "time": 0
+        },
+        {
+          "color": {
+            "r": 0.48,
+            "g": 0.6,
+            "b": 0.44,
+            "a": 1
+          },
+          "time": 1
+        }
+      ],
+      "alpha": [
+        {
+          "alpha": 1,
+          "time": 0
+        },
+        {
+          "alpha": 1,
+          "time": 1
+        }
+      ],
+      "mode": 0
+    },
+    "sibling": 0,
+    "barkGradient": {
+      "colors": [
+        {
+          "color": {
+            "r": 0.26,
+            "g": 0.2015,
+            "b": 0.14300000000000002,
+            "a": 1
+          },
+          "time": 0
+        },
+        {
+          "color": {
+            "r": 0.4,
+            "g": 0.31,
+            "b": 0.22,
+            "a": 1
+          },
+          "time": 1
+        }
+      ],
+      "alpha": [
+        {
+          "alpha": 1,
+          "time": 0
+        },
+        {
+          "alpha": 1,
+          "time": 1
+        }
+      ],
+      "mode": 0
+    }
+  }
+}

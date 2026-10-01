@@ -1,0 +1,208 @@
+{
+  "format": "terrainity.family",
+  "version": 1,
+  "profile": {
+    "id": "sycamore",
+    "name": "Sycamore",
+    "description": "American sycamore (Platanus occidentalis): substantial pale trunk, broad irregular crown and large foliage clusters.",
+    "limbsPerWhorl": 1,
+    "whorlRotation": 31,
+    "branchRotation": 137.508,
+    "crownTipScale": 0.85,
+    "lift": 0.18,
+    "liftExponent": 2,
+    "forkAngle": 50,
+    "childLengthScale": 0.56,
+    "foliageAspect": 1,
+    "branches": {
+      "limbs": 10,
+      "depth": 3,
+      "minDepth": 2,
+      "subBranches": 3,
+      "spread": 1,
+      "bend": 0.5,
+      "sharpness": 0,
+      "angle": 60,
+      "upperAngleBias": 18,
+      "droop": 0.35,
+      "thickness": 0.75
+    },
+    "crownEnd": 0.94,
+    "foliageForm": 0
+  },
+  "defaults": {
+    "format": "terrainity.recipe",
+    "version": 1,
+    "settings": {
+      "assetName": "Sycamore Tree",
+      "species": "Sycamore",
+      "seed": 1842,
+      "height": 10,
+      "trunkRadius": 0.6,
+      "taper": 0.78,
+      "lean": 0.08,
+      "trunkBend": 0.03,
+      "trunkBends": 1,
+      "trunkSharpness": 0,
+      "trunkTwist": 8,
+      "crownWidth": 8,
+      "crownStart": 0.35,
+      "layers": 12,
+      "trunkSides": 10,
+      "trunkSegments": 16,
+      "branchSides": 5,
+      "branchSegments": 6,
+      "foliageCards": 3,
+      "foliageSize": 0.85,
+      "foliageSpread": 0.2,
+      "foliageCutoff": 0.5,
+      "foliageStemAttached": false,
+      "foliageStemPivot": {
+        "x": 0.5,
+        "y": 0
+      },
+      "foliageRotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "foliageFanAngle": 18,
+      "irregularity": 0.14,
+      "bark": {
+        "r": 0.75,
+        "g": 0.73,
+        "b": 0.63,
+        "a": 1
+      },
+      "leaves": {
+        "r": 0.23,
+        "g": 0.4,
+        "b": 0.16,
+        "a": 1
+      },
+      "barkTilingAround": 1,
+      "barkTilingLength": 1,
+      "foliageRoughness": 1,
+      "foliageHighlights": false,
+      "foliageReflections": false,
+      "barkRoughness": 0.95,
+      "barkHighlights": false,
+      "barkReflections": false,
+      "foliageGradientEnabled": true,
+      "foliageTintMode": 1,
+      "variantCount": 1,
+      "variation": 0.08,
+      "showFoliage": true,
+      "customBranches": {
+        "limbs": 10,
+        "depth": 3,
+        "minDepth": 2,
+        "subBranches": 3,
+        "spread": 1,
+        "bend": 0.5,
+        "sharpness": 0,
+        "angle": 60,
+        "upperAngleBias": 18,
+        "droop": 0.35,
+        "thickness": 0.75
+      },
+      "barkGradientEnabled": false
+    },
+    "family": {
+      "id": "sycamore",
+      "name": "Sycamore",
+      "description": "American sycamore (Platanus occidentalis): substantial pale trunk, broad irregular crown and large foliage clusters.",
+      "limbsPerWhorl": 1,
+      "whorlRotation": 31,
+      "branchRotation": 137.508,
+      "crownTipScale": 0.85,
+      "lift": 0.18,
+      "liftExponent": 2,
+      "forkAngle": 50,
+      "childLengthScale": 0.56,
+      "foliageAspect": 1,
+      "branches": {
+        "limbs": 10,
+        "depth": 3,
+        "minDepth": 2,
+        "subBranches": 3,
+        "spread": 1,
+        "bend": 0.5,
+        "sharpness": 0,
+        "angle": 60,
+        "upperAngleBias": 18,
+        "droop": 0.35,
+        "thickness": 0.75
+      },
+      "crownEnd": 0.94,
+      "foliageForm": 0
+    },
+    "foliageGradient": {
+      "colors": [
+        {
+          "color": {
+            "r": 0.23,
+            "g": 0.4,
+            "b": 0.16,
+            "a": 1
+          },
+          "time": 0
+        },
+        {
+          "color": {
+            "r": 0.52,
+            "g": 0.64,
+            "b": 0.3,
+            "a": 1
+          },
+          "time": 1
+        }
+      ],
+      "alpha": [
+        {
+          "alpha": 1,
+          "time": 0
+        },
+        {
+          "alpha": 1,
+          "time": 1
+        }
+      ],
+      "mode": 0
+    },
+    "sibling": 0,
+    "barkGradient": {
+      "colors": [
+        {
+          "color": {
+            "r": 0.48750000000000004,
+            "g": 0.4745,
+            "b": 0.40950000000000003,
+            "a": 1
+          },
+          "time": 0
+        },
+        {
+          "color": {
+            "r": 0.75,
+            "g": 0.73,
+            "b": 0.63,
+            "a": 1
+          },
+          "time": 1
+        }
+      ],
+      "alpha": [
+        {
+          "alpha": 1,
+          "time": 0
+        },
+        {
+          "alpha": 1,
+          "time": 1
+        }
+      ],
+      "mode": 0
+    }
+  }
+}

@@ -1,0 +1,15 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+  <ui:Style src="TerrainityWindow.uss" />
+  <ui:VisualElement class="terrainity">
+    <ui:VisualElement class="header">
+      <ui:VisualElement class="grow">
+        <ui:Label text="T E R R A I N I T Y" class="brand" />
+        <ui:Label text="A little wilderness, made your way." class="subtitle" />
+      </ui:VisualElement>
+      <ui:Label text="FOLIAGE STUDIO  /  UI PREVIEW" class="badge" />
+    </ui:VisualElement>
+    <ui:VisualElement name="tabs" class="tabs" />
+    <ui:VisualElement name="page" class="page" />
+    <ui:Label name="status" text="Tree workshop • Shape, save and generate Terrain-ready families." class="footer" />
+  </ui:VisualElement>
+</ui:UXML>

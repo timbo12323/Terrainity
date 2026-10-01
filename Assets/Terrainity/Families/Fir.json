@@ -1,0 +1,208 @@
+{
+  "format": "terrainity.family",
+  "version": 1,
+  "profile": {
+    "id": "fir",
+    "name": "Fir",
+    "description": "White fir (Abies concolor): regular dense cone, horizontal lower limbs, ascending upper limbs and cool blue-green needles.",
+    "limbsPerWhorl": 4,
+    "whorlRotation": 31,
+    "branchRotation": 137.508,
+    "crownTipScale": 0.08,
+    "lift": 0.12,
+    "liftExponent": 2,
+    "forkAngle": 58,
+    "childLengthScale": 0.44,
+    "foliageAspect": 1,
+    "branches": {
+      "limbs": 24,
+      "depth": 3,
+      "minDepth": 3,
+      "subBranches": 3,
+      "spread": 1,
+      "bend": 0.18,
+      "sharpness": 0,
+      "angle": 88,
+      "upperAngleBias": 32,
+      "droop": 0.18,
+      "thickness": 0.45
+    },
+    "crownEnd": 0.94,
+    "foliageForm": 1
+  },
+  "defaults": {
+    "format": "terrainity.recipe",
+    "version": 1,
+    "settings": {
+      "assetName": "Fir Tree",
+      "species": "Fir",
+      "seed": 1842,
+      "height": 12,
+      "trunkRadius": 0.28,
+      "taper": 0.78,
+      "lean": 0.08,
+      "trunkBend": 0.03,
+      "trunkBends": 1,
+      "trunkSharpness": 0,
+      "trunkTwist": 8,
+      "crownWidth": 5,
+      "crownStart": 0.23,
+      "layers": 12,
+      "trunkSides": 10,
+      "trunkSegments": 16,
+      "branchSides": 5,
+      "branchSegments": 6,
+      "foliageCards": 3,
+      "foliageSize": 0.85,
+      "foliageSpread": 0.2,
+      "foliageCutoff": 0.35,
+      "foliageStemAttached": true,
+      "foliageStemPivot": {
+        "x": 0.5,
+        "y": 0
+      },
+      "foliageRotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "foliageFanAngle": 18,
+      "irregularity": 0.14,
+      "bark": {
+        "r": 0.48,
+        "g": 0.47,
+        "b": 0.43,
+        "a": 1
+      },
+      "leaves": {
+        "r": 0.24,
+        "g": 0.4,
+        "b": 0.36,
+        "a": 1
+      },
+      "barkTilingAround": 1,
+      "barkTilingLength": 1,
+      "foliageRoughness": 1,
+      "foliageHighlights": false,
+      "foliageReflections": false,
+      "barkRoughness": 0.95,
+      "barkHighlights": false,
+      "barkReflections": false,
+      "foliageGradientEnabled": true,
+      "foliageTintMode": 1,
+      "variantCount": 1,
+      "variation": 0.08,
+      "showFoliage": true,
+      "customBranches": {
+        "limbs": 24,
+        "depth": 3,
+        "minDepth": 3,
+        "subBranches": 3,
+        "spread": 1,
+        "bend": 0.18,
+        "sharpness": 0,
+        "angle": 88,
+        "upperAngleBias": 32,
+        "droop": 0.18,
+        "thickness": 0.45
+      },
+      "barkGradientEnabled": false
+    },
+    "family": {
+      "id": "fir",
+      "name": "Fir",
+      "description": "White fir (Abies concolor): regular dense cone, horizontal lower limbs, ascending upper limbs and cool blue-green needles.",
+      "limbsPerWhorl": 4,
+      "whorlRotation": 31,
+      "branchRotation": 137.508,
+      "crownTipScale": 0.08,
+      "lift": 0.12,
+      "liftExponent": 2,
+      "forkAngle": 58,
+      "childLengthScale": 0.44,
+      "foliageAspect": 1,
+      "branches": {
+        "limbs": 24,
+        "depth": 3,
+        "minDepth": 3,
+        "subBranches": 3,
+        "spread": 1,
+        "bend": 0.18,
+        "sharpness": 0,
+        "angle": 88,
+        "upperAngleBias": 32,
+        "droop": 0.18,
+        "thickness": 0.45
+      },
+      "crownEnd": 0.94,
+      "foliageForm": 1
+    },
+    "foliageGradient": {
+      "colors": [
+        {
+          "color": {
+            "r": 0.24,
+            "g": 0.4,
+            "b": 0.36,
+            "a": 1
+          },
+          "time": 0
+        },
+        {
+          "color": {
+            "r": 0.55,
+            "g": 0.68,
+            "b": 0.59,
+            "a": 1
+          },
+          "time": 1
+        }
+      ],
+      "alpha": [
+        {
+          "alpha": 1,
+          "time": 0
+        },
+        {
+          "alpha": 1,
+          "time": 1
+        }
+      ],
+      "mode": 0
+    },
+    "sibling": 0,
+    "barkGradient": {
+      "colors": [
+        {
+          "color": {
+            "r": 0.312,
+            "g": 0.3055,
+            "b": 0.2795,
+            "a": 1
+          },
+          "time": 0
+        },
+        {
+          "color": {
+            "r": 0.48,
+            "g": 0.47,
+            "b": 0.43,
+            "a": 1
+          },
+          "time": 1
+        }
+      ],
+      "alpha": [
+        {
+          "alpha": 1,
+          "time": 0
+        },
+        {
+          "alpha": 1,
+          "time": 1
+        }
+      ],
+      "mode": 0
+    }
+  }
+}
