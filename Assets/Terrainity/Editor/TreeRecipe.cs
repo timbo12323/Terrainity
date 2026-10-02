@@ -51,6 +51,8 @@ namespace Terrainity.Editor
         public int foliageSubdivisions = 1;
         public float foliageBend = 0;
         public float foliageSize = 1;
+        // Zero means a legacy fixed size equal to foliageSize.
+        public float foliageSizeMin = .8f;
         public float foliageWidthScale = 1;
         public float foliageHeightScale = 1;
         public float foliageSpread = .5f;
@@ -252,6 +254,7 @@ namespace Terrainity.Editor
         public int foliageSubdivisions = 1;
         public float foliageBend = 0;
         public float foliageSize = 1;
+        public float foliageSizeMin = 0;
         public float foliageWidthScale = 1;
         public float foliageHeightScale = 1;
         public float foliageSpread = .5f;
@@ -322,6 +325,7 @@ namespace Terrainity.Editor
             if (settings.height < 2 || settings.height > 18 || settings.trunkRadius < .06f || settings.trunkRadius > .7f || settings.crownWidth < 1 || settings.crownWidth > 9 || settings.variantCount < 1 || settings.variantCount > 12)
                 throw new System.IO.InvalidDataException("Recipe dimensions or family size are outside the builder limits.");
             var result = JsonUtility.FromJson<TreeRecipe>(JsonUtility.ToJson(settings));
+            if (result.foliageSizeMin <= 0) result.foliageSizeMin = result.foliageSize;
             result.useFamilyProfile = true;
             result.familyProfile = JsonUtility.FromJson<TreeFamilyProfile>(JsonUtility.ToJson(family));
             result.species = family.name;

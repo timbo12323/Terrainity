@@ -25,7 +25,9 @@
       "angle": 28,
       "upperAngleBias": 0,
       "droop": 0.2,
-      "thickness": 0.72
+      "thickness": 0.72,
+      "taper": 0.68,
+      "attachmentThickness": 1.35
     },
     "crownEnd": 0.94,
     "foliageForm": 0
@@ -39,6 +41,19 @@
       "seed": 1842,
       "height": 10,
       "trunkRadius": 0.5,
+      "rootsEnabled": true,
+      "rootCount": 7,
+      "rootForks": 4,
+      "rootMinForkDepth": 1,
+      "rootMaxForkDepth": 2,
+      "rootBend": 0.2,
+      "rootSharpness": 0,
+      "rootSpread": 2.6,
+      "rootThickness": 0.62,
+      "rootTaper": 0.78,
+      "rootAttachmentHeight": 0.5,
+      "rootDepth": 0.38,
+      "floorHeight": 0,
       "taper": 0.78,
       "lean": 0.08,
       "trunkBend": 0.08,
@@ -52,10 +67,27 @@
       "trunkSegments": 16,
       "branchSides": 5,
       "branchSegments": 6,
+      "barkSurfaceDetail": 0.34,
+      "barkDetailScale": 1.2,
+      "barkDetailResolution": 2,
+      "simplifyWood": false,
+      "simplificationTolerance": 0.002,
       "foliageCards": 3,
-      "foliageSize": 0.7,
-      "foliageSpread": 0.2,
+      "foliageSubdivisions": 2,
+      "foliageBend": 0.12,
+      "foliageSize": 0.68,
+      "foliageSizeMin": 0.58,
+      "foliageWidthScale": 0.82,
+      "foliageHeightScale": 1,
+      "foliageSpread": 0.4,
       "foliageCutoff": 0.5,
+      "foliageFeathering": 0.07,
+      "foliageSoftness": 0.55,
+      "foliageAlphaToCoverage": false,
+      "foliageTransmissionEnabled": true,
+      "foliageTransmission": 0.5,
+      "foliageOcclusion": 0.52,
+      "barkOcclusion": 0.48,
       "foliageStemAttached": false,
       "foliageStemPivot": {
         "x": 0.5,
@@ -74,20 +106,21 @@
         "b": 0.23,
         "a": 1
       },
+      "barkTilingAround": 1,
+      "barkTilingLength": 1,
       "leaves": {
         "r": 0.17,
         "g": 0.33,
         "b": 0.12,
         "a": 1
       },
-      "barkTilingAround": 1,
-      "barkTilingLength": 1,
       "foliageRoughness": 1,
       "foliageHighlights": false,
       "foliageReflections": false,
       "barkRoughness": 0.95,
       "barkHighlights": false,
       "barkReflections": false,
+      "barkGradientEnabled": false,
       "foliageGradientEnabled": true,
       "foliageTintMode": 1,
       "variantCount": 1,
@@ -104,9 +137,10 @@
         "angle": 28,
         "upperAngleBias": 0,
         "droop": 0.2,
-        "thickness": 0.72
-      },
-      "barkGradientEnabled": false
+        "thickness": 0.72,
+        "taper": 0.68,
+        "attachmentThickness": 1.35
+      }
     },
     "family": {
       "id": "elm",
@@ -132,10 +166,45 @@
         "angle": 28,
         "upperAngleBias": 0,
         "droop": 0.2,
-        "thickness": 0.72
+        "thickness": 0.72,
+        "taper": 0.68,
+        "attachmentThickness": 1.35
       },
       "crownEnd": 0.94,
       "foliageForm": 0
+    },
+    "barkGradient": {
+      "colors": [
+        {
+          "color": {
+            "r": 0.2405,
+            "g": 0.2015,
+            "b": 0.14950000000000002,
+            "a": 1
+          },
+          "time": 0
+        },
+        {
+          "color": {
+            "r": 0.37,
+            "g": 0.31,
+            "b": 0.23,
+            "a": 1
+          },
+          "time": 1
+        }
+      ],
+      "alpha": [
+        {
+          "alpha": 1,
+          "time": 0
+        },
+        {
+          "alpha": 1,
+          "time": 1
+        }
+      ],
+      "mode": 0
     },
     "foliageGradient": {
       "colors": [
@@ -170,39 +239,10 @@
       ],
       "mode": 0
     },
-    "sibling": 0,
-    "barkGradient": {
-      "colors": [
-        {
-          "color": {
-            "r": 0.2405,
-            "g": 0.2015,
-            "b": 0.14950000000000002,
-            "a": 1
-          },
-          "time": 0
-        },
-        {
-          "color": {
-            "r": 0.37,
-            "g": 0.31,
-            "b": 0.23,
-            "a": 1
-          },
-          "time": 1
-        }
-      ],
-      "alpha": [
-        {
-          "alpha": 1,
-          "time": 0
-        },
-        {
-          "alpha": 1,
-          "time": 1
-        }
-      ],
-      "mode": 0
-    }
+    "barkTextureGuid": "",
+    "barkTexturePath": "",
+    "foliageTextureGuid": "",
+    "foliageTexturePath": "",
+    "sibling": 0
   }
 }

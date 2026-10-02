@@ -12,9 +12,12 @@ namespace Terrainity.Editor
         {
             ValidateJsonRecipes();
             var report = new System.Text.StringBuilder();
-            foreach (string name in new[] { "Birch", "Spruce", "Cedar", "Sycamore", "Elm", "Fir", "Poplar", "Aspen", "Palm" })
+            foreach (string name in new[] { "Aspen", "Birch", "Cedar", "Elm", "Fir", "Maple", "Oak", "Palm", "Pine", "Poplar", "Spruce", "Sycamore", "Willow" })
             {
                 var family = TreeJsonStorage.ReadFamily("Assets/Terrainity/Families/" + name + ".json");
+                Require(family.defaults != null, name + " missing default recipe");
+                Require(JsonUtility.ToJson(family.profile) == JsonUtility.ToJson(family.defaults.family), name + " embedded profile differs from family");
+                Require(JsonUtility.ToJson(family.profile.branches) == JsonUtility.ToJson(family.defaults.settings.customBranches), name + " branch defaults differ from profile");
                 var recipe = family.defaults.Restore(out var warning);
                 Require(warning.Length == 0, name + " missing textures");
                 var copy = JsonUtility.FromJson<TreeRecipeJson>(JsonUtility.ToJson(TreeRecipeJson.From(recipe, 0))).Restore(out _);
@@ -23,7 +26,7 @@ namespace Terrainity.Editor
                 int wood = 0, leaves = 0;
                 using (var preview = new TreePreview())
                 {
-                    for (int sibling = 0; sibling < recipe.variantCount; sibling++)
+                    for (int sibling = 0; sibling < 5; sibling++)
                     {
                         preview.Build(recipe, sibling);
                         Require(preview.Meshes.Count == 2 && preview.FoliageTriangles > 0, name + " missing geometry");
@@ -57,7 +60,7 @@ namespace Terrainity.Editor
                 Require(foliageMin >= 0, name + " default foliage extends below ground");
             }
             System.IO.File.WriteAllText("Temp/terrainity-families.txt", report.ToString());
-            Debug.Log("[Terrainity] PASS: Family JSON geometry round-trips, ground clearance and finite geometry across 45 sibling previews. " + report);
+            Debug.Log("[Terrainity] PASS: Family JSON geometry round-trips, ground clearance and finite geometry across 65 sibling previews. " + report);
         }
 
         [MenuItem("Tools/Terrainity/Validate Willow Defaults")]

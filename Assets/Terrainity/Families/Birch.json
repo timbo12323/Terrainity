@@ -4,7 +4,7 @@
   "profile": {
     "id": "birch",
     "name": "Birch",
-    "description": "Silver birch (Betula pendula): pale slender trunk, light oval crown and gently hanging fine twigs.",
+    "description": "European silver birch (Betula pendula): slender pale trunk, open crown and fine pendulous twigs.",
     "limbsPerWhorl": 1,
     "whorlRotation": 31,
     "branchRotation": 137.508,
@@ -25,7 +25,9 @@
       "angle": 48,
       "upperAngleBias": 18,
       "droop": 0.3,
-      "thickness": 0.32
+      "thickness": 0.32,
+      "taper": 0.84,
+      "attachmentThickness": 0.82
     },
     "crownEnd": 0.94,
     "foliageForm": 0
@@ -39,10 +41,23 @@
       "seed": 1842,
       "height": 12,
       "trunkRadius": 0.22,
+      "rootsEnabled": true,
+      "rootCount": 5,
+      "rootForks": 1,
+      "rootMinForkDepth": 1,
+      "rootMaxForkDepth": 1,
+      "rootBend": 0,
+      "rootSharpness": 0,
+      "rootSpread": 1.4,
+      "rootThickness": 0.4,
+      "rootTaper": 0.95,
+      "rootAttachmentHeight": 0.18,
+      "rootDepth": 0.2,
+      "floorHeight": 0,
       "taper": 0.78,
       "lean": 0.08,
-      "trunkBend": 0.08,
-      "trunkBends": 1,
+      "trunkBend": 0.1,
+      "trunkBends": 2,
       "trunkSharpness": 0,
       "trunkTwist": 8,
       "crownWidth": 5,
@@ -52,10 +67,27 @@
       "trunkSegments": 16,
       "branchSides": 5,
       "branchSegments": 6,
+      "barkSurfaceDetail": 0.12,
+      "barkDetailScale": 0.6,
+      "barkDetailResolution": 2,
+      "simplifyWood": false,
+      "simplificationTolerance": 0.002,
       "foliageCards": 3,
-      "foliageSize": 0.85,
-      "foliageSpread": 0.2,
+      "foliageSubdivisions": 3,
+      "foliageBend": 0.28,
+      "foliageSize": 0.72,
+      "foliageSizeMin": 0.61,
+      "foliageWidthScale": 0.78,
+      "foliageHeightScale": 1.12,
+      "foliageSpread": 0.16,
       "foliageCutoff": 0.5,
+      "foliageFeathering": 0.06,
+      "foliageSoftness": 0.48,
+      "foliageAlphaToCoverage": false,
+      "foliageTransmissionEnabled": true,
+      "foliageTransmission": 0.6,
+      "foliageOcclusion": 0.4,
+      "barkOcclusion": 0.2,
       "foliageStemAttached": true,
       "foliageStemPivot": {
         "x": 0.5,
@@ -66,7 +98,7 @@
         "y": 0,
         "z": 0
       },
-      "foliageFanAngle": 18,
+      "foliageFanAngle": 12,
       "irregularity": 0.14,
       "bark": {
         "r": 0.85,
@@ -74,20 +106,21 @@
         "b": 0.78,
         "a": 1
       },
+      "barkTilingAround": 1,
+      "barkTilingLength": 1,
       "leaves": {
         "r": 0.28,
         "g": 0.48,
         "b": 0.14,
         "a": 1
       },
-      "barkTilingAround": 1,
-      "barkTilingLength": 1,
       "foliageRoughness": 1,
       "foliageHighlights": false,
       "foliageReflections": false,
-      "barkRoughness": 0.95,
+      "barkRoughness": 0.9,
       "barkHighlights": false,
       "barkReflections": false,
+      "barkGradientEnabled": false,
       "foliageGradientEnabled": true,
       "foliageTintMode": 1,
       "variantCount": 1,
@@ -104,14 +137,15 @@
         "angle": 48,
         "upperAngleBias": 18,
         "droop": 0.3,
-        "thickness": 0.32
-      },
-      "barkGradientEnabled": false
+        "thickness": 0.32,
+        "taper": 0.84,
+        "attachmentThickness": 0.82
+      }
     },
     "family": {
       "id": "birch",
       "name": "Birch",
-      "description": "Silver birch (Betula pendula): pale slender trunk, light oval crown and gently hanging fine twigs.",
+      "description": "European silver birch (Betula pendula): slender pale trunk, open crown and fine pendulous twigs.",
       "limbsPerWhorl": 1,
       "whorlRotation": 31,
       "branchRotation": 137.508,
@@ -132,10 +166,45 @@
         "angle": 48,
         "upperAngleBias": 18,
         "droop": 0.3,
-        "thickness": 0.32
+        "thickness": 0.32,
+        "taper": 0.84,
+        "attachmentThickness": 0.82
       },
       "crownEnd": 0.94,
       "foliageForm": 0
+    },
+    "barkGradient": {
+      "colors": [
+        {
+          "color": {
+            "r": 0.5525,
+            "g": 0.546,
+            "b": 0.507,
+            "a": 1
+          },
+          "time": 0
+        },
+        {
+          "color": {
+            "r": 0.85,
+            "g": 0.84,
+            "b": 0.78,
+            "a": 1
+          },
+          "time": 1
+        }
+      ],
+      "alpha": [
+        {
+          "alpha": 1,
+          "time": 0
+        },
+        {
+          "alpha": 1,
+          "time": 1
+        }
+      ],
+      "mode": 0
     },
     "foliageGradient": {
       "colors": [
@@ -170,39 +239,10 @@
       ],
       "mode": 0
     },
-    "sibling": 0,
-    "barkGradient": {
-      "colors": [
-        {
-          "color": {
-            "r": 0.5525,
-            "g": 0.546,
-            "b": 0.507,
-            "a": 1
-          },
-          "time": 0
-        },
-        {
-          "color": {
-            "r": 0.85,
-            "g": 0.84,
-            "b": 0.78,
-            "a": 1
-          },
-          "time": 1
-        }
-      ],
-      "alpha": [
-        {
-          "alpha": 1,
-          "time": 0
-        },
-        {
-          "alpha": 1,
-          "time": 1
-        }
-      ],
-      "mode": 0
-    }
+    "barkTextureGuid": "",
+    "barkTexturePath": "",
+    "foliageTextureGuid": "",
+    "foliageTexturePath": "",
+    "sibling": 0
   }
 }

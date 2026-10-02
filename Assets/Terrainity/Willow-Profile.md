@@ -19,11 +19,13 @@ Compared against Oregon State University's [summer photograph](https://landscape
 | Family lift / child length | Birch: -0.42 / 0.55 | -0.38 / 0.55 | Downward tips without excessive cumulative drop |
 | Clusters per terminal / cards per cluster | 2 / 6 | 4 / 3 | Distribute foliage along shoots |
 | Card attachment / fan | Floating / 20° | Stem attached / 8° | Follow branch direction closely |
+| Card width / height scale | 1 / 1 | 0.55 / 1.55 | Suggest narrow lanceolate leaf sprays |
+| Roots / bark detail | Off / 0 | Eight main roots / 0.32 | Ground the heavy trunk and suggest furrowed bark |
 
-Matte foliage uses a muted yellow-green gradient; bark uses gray-brown tint. The preview still uses the existing procedural foliage and bark textures. Its leaves are broader and its crown more open than the photographs; a dedicated narrow-leaf willow spray texture is the next visual improvement. No reference photographs are bundled as textures.
+Matte foliage uses a muted yellow-green gradient; bark uses a dark gray-brown tint. The preview still uses the existing procedural foliage and bark textures. Its leaf silhouette cannot match the real narrow leaves without a dedicated willow spray texture. No reference photographs are bundled as textures.
 
 ## Verification
 
-Default seed 1842, five siblings at 0.08 variation: branch points remain at least 0.758 m above ground, with 1,615 of 1,620 terminal tips descending. All five foliage meshes remain above ground. Combined branch measurements reach about 9.88 m tall and 11.82 m in radial diameter. First sibling: 43,770 wood triangles and 7,776 foliage triangles. These checks cover the shipped defaults, not every possible slider combination.
+The earlier preview measurements predate the new root, card and bark settings. They should be regenerated with the current JSON before being used as geometry or performance targets.
 
 Run **Tools > Terrainity > Validate Willow Defaults** to repeat geometry/clearance checks and the existing JSON checks. Lower branch segments or fork depth for a cheaper mesh.

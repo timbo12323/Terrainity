@@ -4,28 +4,245 @@
   "profile": {
     "id": "maple",
     "name": "Maple",
-    "description": "Maple growth profile. Edit the family JSON to customize its growth rules.",
+    "description": "Sugar maple (Acer saccharum): ascending scaffold branches, dense oval crown and lobed green foliage.",
     "limbsPerWhorl": 1,
     "whorlRotation": 31,
     "branchRotation": 137.508,
-    "crownTipScale": 0.55,
-    "lift": 0.23,
+    "crownTipScale": 0.67,
+    "lift": 0.2,
     "liftExponent": 2,
-    "forkAngle": 65,
-    "childLengthScale": 0.45,
+    "forkAngle": 52,
+    "childLengthScale": 0.51,
     "foliageAspect": 1,
     "branches": {
       "depth": 3,
-      "minDepth": -1,
-      "subBranches": 2,
+      "minDepth": 2,
+      "subBranches": 3,
       "sharpness": 0,
-      "limbs": 9,
-      "spread": 0.9,
+      "limbs": 11,
+      "spread": 1.02,
       "bend": 0.45,
-      "angle": 52,
-      "upperAngleBias": 23,
-      "droop": 0.5,
-      "thickness": 0.55
-    }
+      "angle": 53,
+      "upperAngleBias": 19,
+      "droop": 0.28,
+      "thickness": 0.59,
+      "taper": 0.74,
+      "attachmentThickness": 1.2
+    },
+    "crownEnd": 0.94,
+    "foliageForm": 0
+  },
+  "defaults": {
+    "format": "terrainity.recipe",
+    "version": 1,
+    "settings": {
+      "assetName": "Woodland Maple",
+      "species": "Maple",
+      "seed": 1842,
+      "height": 12,
+      "trunkRadius": 0.42,
+      "rootsEnabled": true,
+      "rootCount": 7,
+      "rootForks": 3,
+      "rootMinForkDepth": 1,
+      "rootMaxForkDepth": 2,
+      "rootBend": 0.18,
+      "rootSharpness": 0,
+      "rootSpread": 2.1,
+      "rootThickness": 0.57,
+      "rootTaper": 0.82,
+      "rootAttachmentHeight": 0.4,
+      "rootDepth": 0.32,
+      "floorHeight": 0,
+      "taper": 0.72,
+      "lean": 0.06,
+      "trunkBend": 0.07,
+      "trunkBends": 2,
+      "trunkSharpness": 0,
+      "trunkTwist": 8,
+      "crownWidth": 7,
+      "crownStart": 0.34,
+      "layers": 9,
+      "trunkSides": 9,
+      "trunkSegments": 16,
+      "branchSides": 9,
+      "branchSegments": 16,
+      "barkSurfaceDetail": 0.28,
+      "barkDetailScale": 1.1,
+      "barkDetailResolution": 2,
+      "simplifyWood": false,
+      "simplificationTolerance": 0.002,
+      "foliageCards": 4,
+      "foliageSubdivisions": 2,
+      "foliageBend": 0.12,
+      "foliageSize": 0.83,
+      "foliageSizeMin": 0.71,
+      "foliageWidthScale": 1.12,
+      "foliageHeightScale": 1,
+      "foliageSpread": 0.35,
+      "foliageCutoff": 0.4,
+      "foliageFeathering": 0.06,
+      "foliageSoftness": 0.58,
+      "foliageAlphaToCoverage": false,
+      "foliageTransmissionEnabled": true,
+      "foliageTransmission": 0.52,
+      "foliageOcclusion": 0.55,
+      "barkOcclusion": 0.45,
+      "foliageStemAttached": false,
+      "foliageStemPivot": {
+        "x": 0.5,
+        "y": 0
+      },
+      "foliageRotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "foliageFanAngle": 20,
+      "irregularity": 0.18,
+      "bark": {
+        "r": 0.39,
+        "g": 0.37,
+        "b": 0.31,
+        "a": 1
+      },
+      "barkTilingAround": 2,
+      "barkTilingLength": 1.3,
+      "leaves": {
+        "r": 0.24,
+        "g": 0.42,
+        "b": 0.17,
+        "a": 1
+      },
+      "foliageRoughness": 1,
+      "foliageHighlights": false,
+      "foliageReflections": false,
+      "barkRoughness": 0.95,
+      "barkHighlights": false,
+      "barkReflections": false,
+      "barkGradientEnabled": false,
+      "foliageGradientEnabled": true,
+      "foliageTintMode": 1,
+      "variantCount": 1,
+      "variation": 0.12,
+      "showFoliage": true,
+      "customBranches": {
+        "depth": 3,
+        "minDepth": 2,
+        "subBranches": 3,
+        "sharpness": 0,
+        "limbs": 11,
+        "spread": 1.02,
+        "bend": 0.45,
+        "angle": 53,
+        "upperAngleBias": 19,
+        "droop": 0.28,
+        "thickness": 0.59,
+        "taper": 0.74,
+        "attachmentThickness": 1.2
+      }
+    },
+    "family": {
+      "id": "maple",
+      "name": "Maple",
+      "description": "Sugar maple (Acer saccharum): ascending scaffold branches, dense oval crown and lobed green foliage.",
+      "limbsPerWhorl": 1,
+      "whorlRotation": 31,
+      "branchRotation": 137.508,
+      "crownTipScale": 0.67,
+      "lift": 0.2,
+      "liftExponent": 2,
+      "forkAngle": 52,
+      "childLengthScale": 0.51,
+      "foliageAspect": 1,
+      "branches": {
+        "depth": 3,
+        "minDepth": 2,
+        "subBranches": 3,
+        "sharpness": 0,
+        "limbs": 11,
+        "spread": 1.02,
+        "bend": 0.45,
+        "angle": 53,
+        "upperAngleBias": 19,
+        "droop": 0.28,
+        "thickness": 0.59,
+        "taper": 0.74,
+        "attachmentThickness": 1.2
+      },
+      "crownEnd": 0.94,
+      "foliageForm": 0
+    },
+    "barkGradient": {
+      "colors": [
+        {
+          "color": {
+            "r": 0.39,
+            "g": 0.37,
+            "b": 0.31,
+            "a": 1
+          },
+          "time": 0
+        },
+        {
+          "color": {
+            "r": 0.39,
+            "g": 0.37,
+            "b": 0.31,
+            "a": 1
+          },
+          "time": 1
+        }
+      ],
+      "alpha": [
+        {
+          "alpha": 1,
+          "time": 0
+        },
+        {
+          "alpha": 1,
+          "time": 1
+        }
+      ],
+      "mode": 0
+    },
+    "foliageGradient": {
+      "colors": [
+        {
+          "color": {
+            "r": 0.16,
+            "g": 0.31,
+            "b": 0.12,
+            "a": 1
+          },
+          "time": 0
+        },
+        {
+          "color": {
+            "r": 0.35,
+            "g": 0.53,
+            "b": 0.22,
+            "a": 1
+          },
+          "time": 1
+        }
+      ],
+      "alpha": [
+        {
+          "alpha": 1,
+          "time": 0
+        },
+        {
+          "alpha": 1,
+          "time": 1
+        }
+      ],
+      "mode": 0
+    },
+    "barkTextureGuid": "",
+    "barkTexturePath": "",
+    "foliageTextureGuid": "",
+    "foliageTexturePath": "",
+    "sibling": 0
   }
 }

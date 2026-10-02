@@ -4,7 +4,7 @@
   "profile": {
     "id": "aspen",
     "name": "Aspen",
-    "description": "Quaking aspen (Populus tremuloides): pale slender trunk with an elevated, open rounded crown.",
+    "description": "Quaking aspen (Populus tremuloides): long pale trunk, narrow rounded crown and small fluttering leaves.",
     "limbsPerWhorl": 1,
     "whorlRotation": 31,
     "branchRotation": 137.508,
@@ -25,7 +25,9 @@
       "angle": 45,
       "upperAngleBias": 12,
       "droop": 0.18,
-      "thickness": 0.38
+      "thickness": 0.38,
+      "taper": 0.82,
+      "attachmentThickness": 0.88
     },
     "crownEnd": 0.94,
     "foliageForm": 0
@@ -39,10 +41,23 @@
       "seed": 1842,
       "height": 12,
       "trunkRadius": 0.21,
+      "rootsEnabled": true,
+      "rootCount": 5,
+      "rootForks": 1,
+      "rootMinForkDepth": 1,
+      "rootMaxForkDepth": 1,
+      "rootBend": 0,
+      "rootSharpness": 0,
+      "rootSpread": 1.15,
+      "rootThickness": 0.38,
+      "rootTaper": 0.95,
+      "rootAttachmentHeight": 0.18,
+      "rootDepth": 0.16,
+      "floorHeight": 0,
       "taper": 0.78,
       "lean": 0.08,
-      "trunkBend": 0.03,
-      "trunkBends": 1,
+      "trunkBend": 0.04,
+      "trunkBends": 2,
       "trunkSharpness": 0,
       "trunkTwist": 8,
       "crownWidth": 4.5,
@@ -52,10 +67,27 @@
       "trunkSegments": 16,
       "branchSides": 5,
       "branchSegments": 6,
+      "barkSurfaceDetail": 0.08,
+      "barkDetailScale": 0.7,
+      "barkDetailResolution": 2,
+      "simplifyWood": false,
+      "simplificationTolerance": 0.002,
       "foliageCards": 3,
-      "foliageSize": 0.85,
-      "foliageSpread": 0.2,
+      "foliageSubdivisions": 2,
+      "foliageBend": 0.14,
+      "foliageSize": 0.68,
+      "foliageSizeMin": 0.58,
+      "foliageWidthScale": 1,
+      "foliageHeightScale": 1,
+      "foliageSpread": 0.28,
       "foliageCutoff": 0.5,
+      "foliageFeathering": 0.05,
+      "foliageSoftness": 0.45,
+      "foliageAlphaToCoverage": false,
+      "foliageTransmissionEnabled": true,
+      "foliageTransmission": 0.58,
+      "foliageOcclusion": 0.42,
+      "barkOcclusion": 0.18,
       "foliageStemAttached": false,
       "foliageStemPivot": {
         "x": 0.5,
@@ -66,7 +98,7 @@
         "y": 0,
         "z": 0
       },
-      "foliageFanAngle": 18,
+      "foliageFanAngle": 22,
       "irregularity": 0.14,
       "bark": {
         "r": 0.84,
@@ -74,20 +106,21 @@
         "b": 0.74,
         "a": 1
       },
+      "barkTilingAround": 1,
+      "barkTilingLength": 1,
       "leaves": {
         "r": 0.26,
         "g": 0.46,
         "b": 0.16,
         "a": 1
       },
-      "barkTilingAround": 1,
-      "barkTilingLength": 1,
       "foliageRoughness": 1,
       "foliageHighlights": false,
       "foliageReflections": false,
-      "barkRoughness": 0.95,
+      "barkRoughness": 0.9,
       "barkHighlights": false,
       "barkReflections": false,
+      "barkGradientEnabled": false,
       "foliageGradientEnabled": true,
       "foliageTintMode": 1,
       "variantCount": 1,
@@ -104,14 +137,15 @@
         "angle": 45,
         "upperAngleBias": 12,
         "droop": 0.18,
-        "thickness": 0.38
-      },
-      "barkGradientEnabled": false
+        "thickness": 0.38,
+        "taper": 0.82,
+        "attachmentThickness": 0.88
+      }
     },
     "family": {
       "id": "aspen",
       "name": "Aspen",
-      "description": "Quaking aspen (Populus tremuloides): pale slender trunk with an elevated, open rounded crown.",
+      "description": "Quaking aspen (Populus tremuloides): long pale trunk, narrow rounded crown and small fluttering leaves.",
       "limbsPerWhorl": 1,
       "whorlRotation": 31,
       "branchRotation": 137.508,
@@ -132,10 +166,45 @@
         "angle": 45,
         "upperAngleBias": 12,
         "droop": 0.18,
-        "thickness": 0.38
+        "thickness": 0.38,
+        "taper": 0.82,
+        "attachmentThickness": 0.88
       },
       "crownEnd": 0.94,
       "foliageForm": 0
+    },
+    "barkGradient": {
+      "colors": [
+        {
+          "color": {
+            "r": 0.546,
+            "g": 0.5525,
+            "b": 0.481,
+            "a": 1
+          },
+          "time": 0
+        },
+        {
+          "color": {
+            "r": 0.84,
+            "g": 0.85,
+            "b": 0.74,
+            "a": 1
+          },
+          "time": 1
+        }
+      ],
+      "alpha": [
+        {
+          "alpha": 1,
+          "time": 0
+        },
+        {
+          "alpha": 1,
+          "time": 1
+        }
+      ],
+      "mode": 0
     },
     "foliageGradient": {
       "colors": [
@@ -170,39 +239,10 @@
       ],
       "mode": 0
     },
-    "sibling": 0,
-    "barkGradient": {
-      "colors": [
-        {
-          "color": {
-            "r": 0.546,
-            "g": 0.5525,
-            "b": 0.481,
-            "a": 1
-          },
-          "time": 0
-        },
-        {
-          "color": {
-            "r": 0.84,
-            "g": 0.85,
-            "b": 0.74,
-            "a": 1
-          },
-          "time": 1
-        }
-      ],
-      "alpha": [
-        {
-          "alpha": 1,
-          "time": 0
-        },
-        {
-          "alpha": 1,
-          "time": 1
-        }
-      ],
-      "mode": 0
-    }
+    "barkTextureGuid": "",
+    "barkTexturePath": "",
+    "foliageTextureGuid": "",
+    "foliageTexturePath": "",
+    "sibling": 0
   }
 }

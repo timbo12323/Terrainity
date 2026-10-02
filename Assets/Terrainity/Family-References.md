@@ -1,103 +1,31 @@
-# Tree family references and tuning
+# Tree family references and defaults
 
-The library now contains 13 families. Birch is updated; Spruce, Cedar, Sycamore, Elm, Fir, Poplar, Aspen and Palm are added. Select a family to apply its complete JSON default recipe. Existing saved recipes retain their embedded profile.
+Each of the 13 family files contains a complete `terrainity.recipe` default. Selecting a family applies its embedded settings; saved recipes retain their own copy. Common names can cover several species, so the reference species below make the intended form explicit. Dimensions are landscape-scale builder inputs, not maximum mature botanical measurements. Height measures the trunk; generated branches and foliage can extend beyond the crown-width input.
 
-## Scope
+The botanical sources guided silhouette, branch angle, crown density, bark and foliage color, and the newly exposed root, taper, surface detail, translucency, and card-shading controls. Numeric values are artistic translations into the builder's supported ranges. The built-in broadleaf and needle masks are generic, so they cannot reproduce species-specific leaf margins, bark scars, cones, flowers, or seeds. No reference photographs are copied into the project.
 
-Common names cover many species. These are the explicit reference types chosen for this library. Defaults are artistic landscape-scale representations within the builder limits, not maximum mature botanical dimensions. Crown width is a growth input: child branches and cards extend beyond it. The Height control measures the trunk, not the final canopy.
+| Family | Reference type and defining traits | Default tuning |
+| --- | --- | --- |
+| [Aspen](https://landscapeplants.oregonstate.edu/plants/populus-tremuloides) | Quaking aspen; long pale trunk, narrow rounded upper crown, thin fluttering leaves | High crown start, fine branch bases, light bark, small soft leaf cards, restrained roots |
+| [Birch](https://landscapeplants.oregonstate.edu/plants/betula-pendula) | European silver birch; white trunk and fine pendulous shoots | Open high crown, narrow drooping foliage, slender branches and low bark relief |
+| [Cedar](https://landscapeplants.oregonstate.edu/plants/cedrus-deodara) | Deodar cedar; broad pyramidal tiers and drooping leaders | Wide whorls, hanging needle sprays, substantial branch sockets and gray-green tint |
+| [Elm](https://landscapeplants.oregonstate.edu/plants/ulmus-americana) | American elm; ascending scaffold limbs arch into a vase | Steep main limbs, long upper reach, thicker attachments and elevated foliage |
+| [Fir](https://landscapeplants.oregonstate.edu/plants/abies-concolor) | White fir; conical, lower branches horizontal, upper branches rise | Narrow cone, low crown start, pale blue-green needles and little branch bend |
+| [Maple](https://landscapeplants.oregonstate.edu/plants/acer-saccharum) | Sugar maple; ascending branches and dense oval crown | Moderate fork angles, fuller broadleaf clusters, plated gray bark and rounded canopy |
+| [Oak](https://landscapeplants.oregonstate.edu/plants/quercus-robur) | English oak; massive short trunk, heavy spreading limbs and rounded crown | Wider lower limbs, thick branch bases, broad crown, coarse bark and broad roots |
+| [Palm](https://ask.ifas.ufl.edu/publication/ST439) | Canary Island date palm; single thick trunk and terminal feather crown | Unbranched trunk, folded frond form and no exposed lateral roots |
+| [Pine](https://landscapeplants.oregonstate.edu/plants/pinus-sylvestris) | Scots pine; open high crown, spreading limbs and orange upper bark | Raised irregular crown, needle form, open sprays and bark gradient |
+| [Poplar](https://landscapeplants.oregonstate.edu/plants/populus-nigra-italica) | Lombardy poplar; very narrow, dense column | Upright short limbs, tight forks, small leaf cards and narrow roots |
+| [Spruce](https://landscapeplants.oregonstate.edu/plants/picea-abies) | Norway spruce; tapered cone and drooping secondary branches | Near-horizontal whorls, hanging needle sprays and dense interior shade |
+| [Sycamore](https://landscapeplants.oregonstate.edu/plants/platanus-occidentalis) | American sycamore; massive trunk, wide crown and pale exfoliating bark | Broad limbs, large leaf clusters, heavy roots and pale bark gradient |
+| [Willow](https://landscapeplants.oregonstate.edu/plants/salix-babylonica) | Weeping willow; rounded crown and long pendulous twigs | Strong downward curvature, long narrow leaf cards, dark furrowed bark and spreading roots |
 
-## Parameter comparison
+## Complete defaults
 
-Standard recipe baseline: 7 m trunk height, 3.8 m crown-width input, 0.2 m trunk radius and 0.25 crown start.
+Every family now specifies all active builder fields in `TreeRecipeSettings`, including roots, trunk bend, branch taper and attachment thickness, foliage subdivisions and bend, material softness, feathering, transmission, occlusion, bark detail, and family variation. The four legacy branch fields used only by profile-free recipes are omitted. `profile.branches`, embedded `defaults.family.branches`, and `defaults.settings.customBranches` use the same values. The three former profile-only families (Maple, Oak, Pine) now have recipe defaults too. Texture paths remain empty so the built-in masks continue to work without external assets.
 
-| Family | Trunk height / crown input (m) | Trunk radius (m) | Crown start | Main limbs / children | Fork depth | Primary angle / upper lift | Bend / downward weight |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| Birch | 12 / 5 | 0.22 | 0.4 | 13 / 3 | 2–3 | 48° / 18° | 0.6 / 0.3 |
-| Spruce | 12 / 5.2 | 0.28 | 0.3 | 24 / 3 | 3–3 | 88° / 22° | 0.35 / 0.22 |
-| Cedar | 12 / 7 | 0.4 | 0.42 | 21 / 3 | 2–3 | 82° / 18° | 0.45 / 0.25 |
-| Sycamore | 10 / 8 | 0.6 | 0.35 | 10 / 3 | 2–3 | 60° / 18° | 0.5 / 0.35 |
-| Elm | 10 / 7 | 0.5 | 0.32 | 9 / 3 | 3–3 | 28° / 0° | 0.55 / 0.2 |
-| Fir | 12 / 5 | 0.28 | 0.23 | 24 / 3 | 3–3 | 88° / 32° | 0.18 / 0.18 |
-| Poplar | 14 / 3.5 | 0.26 | 0.2 | 20 / 3 | 2–3 | 16° / 6° | 0.2 / 0.08 |
-| Aspen | 12 / 4.5 | 0.21 | 0.48 | 11 / 3 | 2–3 | 45° / 12° | 0.3 / 0.18 |
-| Palm | 9 / 8 | 0.48 | 0.93 | 24 / 1 | 0–0 | 95° / 45° | 0.6 / 0.12 |
-
-## Image observations and sources
-
-### Birch — European silver birch
-
-Pale slender trunk and pendulous fine twigs. Increased crown height and child density from the old Birch preset; retained smooth downward curvature and narrow forks.
-
-[Botanical description](https://landscapeplants.oregonstate.edu/plants/betula-pendula) · [Inspected reference photograph](https://landscapeplants.oregonstate.edu/sites/plantid7/files/plantimage/bepe339A.jpg)
-
-### Spruce — Norway spruce
-
-Pyramidal outline with drooping secondary shoots. Four limbs per whorl, a strongly tapering crown, negative lift and dark needle sprays distinguish it from Pine.
-
-[Botanical description](https://landscapeplants.oregonstate.edu/plants/picea-abies) · [Inspected reference photograph](https://landscapeplants.oregonstate.edu/sites/plantid7/files/plantimage/piab977.jpg)
-
-### Cedar — Deodar cedar
-
-Broad spreading tiers and softly drooping shoots. Wider crown, three limbs per tier, longer child branches and muted gray-green foliage distinguish it from Spruce.
-
-[Botanical description](https://landscapeplants.oregonstate.edu/plants/cedrus-deodara) · [Inspected reference photograph](https://landscapeplants.oregonstate.edu/sites/plantid7/files/plantimage/cede0967A.jpg)
-
-### Sycamore — American sycamore
-
-Large supporting trunk, broad irregular crown and broad lobed leaves. Thick limbs, wider forks and larger foliage clusters produce a robust silhouette.
-
-[Botanical description](https://landscapeplants.oregonstate.edu/plants/platanus-occidentalis) · [Inspected reference photograph](https://www.portland.gov/sites/default/files/2020-06/015.jpg?auto=false)
-
-### Elm — American elm
-
-Ascending scaffold limbs spread into a vase. Steeper primary limbs and longer upper limbs lift and widen the canopy; gentle downward curvature softens the ends.
-
-[Botanical description](https://landscapeplants.oregonstate.edu/plants/ulmus-americana) · [Inspected reference photograph](https://landscapeplants.oregonstate.edu/sites/plantid7/files/plantimage/ulam846B.jpg)
-
-### Fir — White fir
-
-Regular conical form with ascending upper branches and pale blue-green needles. Smaller bend, shorter children and a narrower crown tip distinguish it from Spruce.
-
-[Botanical description](https://landscapeplants.oregonstate.edu/plants/abies-concolor) · [Inspected reference photograph](https://landscapeplants.oregonstate.edu/sites/plantid7/files/plantimage/abco9984.jpg)
-
-### Poplar — Lombardy poplar
-
-Extremely narrow upright crown. Steep primary angles, 14-degree forks and a small crown width keep the branch network close to the trunk.
-
-[Botanical description](https://landscapeplants.oregonstate.edu/plants/populus-nigra-italica) · [Inspected reference photograph](https://landscapeplants.oregonstate.edu/sites/plantid7/files/plantimage/ponii680B.jpg)
-
-### Aspen — Quaking aspen
-
-Long pale trunk and a relatively open elevated crown. Higher crown start, smaller limbs and moderate upward lift distinguish it from Birch.
-
-[Botanical description](https://landscapeplants.oregonstate.edu/plants/populus-tremuloides) · [Inspected reference photograph](https://landscapeplants.oregonstate.edu/sites/plantid7/files/plantimage/potre931.jpg)
-
-### Palm — Canary Island date palm
-
-Terminal crown of long feather fronds on an unbranched trunk. No recursive forks; 24 curved, folded ribbons surround the top of a lightly tapered trunk.
-
-[Botanical description](https://ask.ifas.ufl.edu/publication/ST439) · [Inspected reference photograph](https://ask.ifas.ufl.edu/image/ST439/11642562/16748718/16748718-2048.webp)
-
-## Preview comparison and limitations
-
-Every family was rendered and visually compared with its reference. The conifers have distinguishable tapered crowns; Poplar is a column, Elm spreads above upright limbs, and Aspen exposes more trunk. Palm uses actual curved ribbons instead of broadleaf clusters. Compared with photographs, these remain simplified silhouettes: generic broadleaf shapes, procedural bark, fewer palm fronds, and evenly distributed branching. Birch/Aspen bark lacks species-specific scars; Sycamore lacks exfoliating patchwork. Dedicated artwork can replace the procedural textures through the existing material fields. No reference photographs are copied into project assets.
-
-The built-in needle spray has a 1:2 texture aspect ratio and tapered alpha outline. Palm uses the same feather pattern along curved ribbons. Its Foliage layout shows Frond width; frond count and curvature are controlled through Branches. Card-only controls are hidden for this form.
+The values are intended to give a recognizable tree on first selection. They are not a botanical growth simulation. In particular, the palm generator caps visible fronds at 24, while a healthy mature Canary Island date palm can carry far more; its trunk also lacks the species' diamond leaf-base scars. The generic broadleaf mask cannot reproduce the exact lobes of oak, maple, or sycamore, and the bark shader does not create birch scars or true sycamore exfoliation. Species-specific texture artwork can be assigned in the builder when closer detail is needed.
 
 ## Validation
 
-Run **Tools > Terrainity > Validate Family Library**. It loads all nine defaults, checks JSON geometry round-trips, renders five siblings per family and checks finite vertices and foliage ground clearance. It writes reference previews and a measurement report to Temp. The initial seed is 1842; clearance is verified for those five shipped siblings, not arbitrary seeds or slider combinations. Existing JSON recipe checks run as part of this validation.
-
-Measurements from the verified defaults (height and width are maxima across five siblings; triangle counts are sibling 1):
-
-```text
-Birch: foliageMin=3.35, height=12.92, width=7.63, wood=32750, foliage=7128
-Spruce: foliageMin=0.63, height=12.11, width=8.95, wood=70780, foliage=15552
-Cedar: foliageMin=0.50, height=12.77, width=11.49, wood=46170, foliage=10152
-Sycamore: foliageMin=2.86, height=14.74, width=13.21, wood=29840, foliage=6480
-Elm: foliageMin=4.02, height=14.91, width=11.20, wood=26890, foliage=5832
-Fir: foliageMin=0.64, height=12.08, width=8.21, wood=70780, foliage=15552
-Poplar: foliageMin=4.24, height=15.05, width=2.47, wood=45480, foliage=9936
-Aspen: foliageMin=6.43, height=13.77, width=5.97, wood=30810, foliage=6696
-Palm: foliageMin=6.51, height=10.60, width=8.36, wood=2500, foliage=960
-```
+Run **Tools > Terrainity > Validate Family Library** after editing a family. It loads the JSON through Unity, checks recipe round-trips, and renders five seeded siblings for each family. The earlier preview measurements were taken before these updated defaults and are no longer representative.
