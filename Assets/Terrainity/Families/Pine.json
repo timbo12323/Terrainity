@@ -4,28 +4,245 @@
   "profile": {
     "id": "pine",
     "name": "Pine",
-    "description": "Pine growth profile. Edit the family JSON to customize its growth rules.",
-    "limbsPerWhorl": 4,
+    "description": "Scots pine (Pinus sylvestris): high irregular open crown, spreading limbs and warm orange upper bark.",
+    "limbsPerWhorl": 3,
     "whorlRotation": 31,
     "branchRotation": 137.508,
-    "crownTipScale": 0.18,
-    "lift": 0.22,
+    "crownTipScale": 0.78,
+    "lift": 0.12,
     "liftExponent": 2,
-    "forkAngle": 48,
-    "childLengthScale": 0.48,
-    "foliageAspect": 0.65,
+    "forkAngle": 47,
+    "childLengthScale": 0.49,
+    "foliageAspect": 1,
     "branches": {
       "depth": 3,
-      "minDepth": -1,
-      "subBranches": 2,
+      "minDepth": 2,
+      "subBranches": 3,
       "sharpness": 0,
-      "limbs": 16,
-      "spread": 1,
-      "bend": 0.25,
-      "angle": 75,
-      "upperAngleBias": 20,
-      "droop": 0.4,
-      "thickness": 0.4
-    }
+      "limbs": 15,
+      "spread": 1.05,
+      "bend": 0.36,
+      "angle": 77,
+      "upperAngleBias": 15,
+      "droop": 0.3,
+      "thickness": 0.5,
+      "taper": 0.77,
+      "attachmentThickness": 1.15
+    },
+    "crownEnd": 0.94,
+    "foliageForm": 1
+  },
+  "defaults": {
+    "format": "terrainity.recipe",
+    "version": 1,
+    "settings": {
+      "assetName": "Woodland Pine",
+      "species": "Pine",
+      "seed": 1842,
+      "height": 13,
+      "trunkRadius": 0.35,
+      "rootsEnabled": true,
+      "rootCount": 7,
+      "rootForks": 2,
+      "rootMinForkDepth": 1,
+      "rootMaxForkDepth": 2,
+      "rootBend": 0.2,
+      "rootSharpness": 0,
+      "rootSpread": 2.2,
+      "rootThickness": 0.54,
+      "rootTaper": 0.85,
+      "rootAttachmentHeight": 0.35,
+      "rootDepth": 0.4,
+      "floorHeight": 0,
+      "taper": 0.73,
+      "lean": 0.1,
+      "trunkBend": 0.12,
+      "trunkBends": 2,
+      "trunkSharpness": 0,
+      "trunkTwist": 15,
+      "crownWidth": 7,
+      "crownStart": 0.53,
+      "layers": 9,
+      "trunkSides": 9,
+      "trunkSegments": 16,
+      "branchSides": 9,
+      "branchSegments": 16,
+      "barkSurfaceDetail": 0.32,
+      "barkDetailScale": 1.2,
+      "barkDetailResolution": 2,
+      "simplifyWood": false,
+      "simplificationTolerance": 0.002,
+      "foliageCards": 3,
+      "foliageSubdivisions": 2,
+      "foliageBend": 0.13,
+      "foliageSize": 0.73,
+      "foliageSizeMin": 0.62,
+      "foliageWidthScale": 0.8,
+      "foliageHeightScale": 1,
+      "foliageSpread": 0.22,
+      "foliageCutoff": 0.34,
+      "foliageFeathering": 0.06,
+      "foliageSoftness": 0.34,
+      "foliageAlphaToCoverage": false,
+      "foliageTransmissionEnabled": true,
+      "foliageTransmission": 0.28,
+      "foliageOcclusion": 0.45,
+      "barkOcclusion": 0.4,
+      "foliageStemAttached": true,
+      "foliageStemPivot": {
+        "x": 0.5,
+        "y": 0
+      },
+      "foliageRotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "foliageFanAngle": 18,
+      "irregularity": 0.28,
+      "bark": {
+        "r": 0.46,
+        "g": 0.29,
+        "b": 0.18,
+        "a": 1
+      },
+      "barkTilingAround": 2,
+      "barkTilingLength": 1.2,
+      "leaves": {
+        "r": 0.18,
+        "g": 0.31,
+        "b": 0.27,
+        "a": 1
+      },
+      "foliageRoughness": 1,
+      "foliageHighlights": false,
+      "foliageReflections": false,
+      "barkRoughness": 0.95,
+      "barkHighlights": false,
+      "barkReflections": false,
+      "barkGradientEnabled": true,
+      "foliageGradientEnabled": true,
+      "foliageTintMode": 1,
+      "variantCount": 1,
+      "variation": 0.12,
+      "showFoliage": true,
+      "customBranches": {
+        "depth": 3,
+        "minDepth": 2,
+        "subBranches": 3,
+        "sharpness": 0,
+        "limbs": 15,
+        "spread": 1.05,
+        "bend": 0.36,
+        "angle": 77,
+        "upperAngleBias": 15,
+        "droop": 0.3,
+        "thickness": 0.5,
+        "taper": 0.77,
+        "attachmentThickness": 1.15
+      }
+    },
+    "family": {
+      "id": "pine",
+      "name": "Pine",
+      "description": "Scots pine (Pinus sylvestris): high irregular open crown, spreading limbs and warm orange upper bark.",
+      "limbsPerWhorl": 3,
+      "whorlRotation": 31,
+      "branchRotation": 137.508,
+      "crownTipScale": 0.78,
+      "lift": 0.12,
+      "liftExponent": 2,
+      "forkAngle": 47,
+      "childLengthScale": 0.49,
+      "foliageAspect": 1,
+      "branches": {
+        "depth": 3,
+        "minDepth": 2,
+        "subBranches": 3,
+        "sharpness": 0,
+        "limbs": 15,
+        "spread": 1.05,
+        "bend": 0.36,
+        "angle": 77,
+        "upperAngleBias": 15,
+        "droop": 0.3,
+        "thickness": 0.5,
+        "taper": 0.77,
+        "attachmentThickness": 1.15
+      },
+      "crownEnd": 0.94,
+      "foliageForm": 1
+    },
+    "barkGradient": {
+      "colors": [
+        {
+          "color": {
+            "r": 0.31,
+            "g": 0.26,
+            "b": 0.22,
+            "a": 1
+          },
+          "time": 0
+        },
+        {
+          "color": {
+            "r": 0.7,
+            "g": 0.37,
+            "b": 0.18,
+            "a": 1
+          },
+          "time": 1
+        }
+      ],
+      "alpha": [
+        {
+          "alpha": 1,
+          "time": 0
+        },
+        {
+          "alpha": 1,
+          "time": 1
+        }
+      ],
+      "mode": 0
+    },
+    "foliageGradient": {
+      "colors": [
+        {
+          "color": {
+            "r": 0.13,
+            "g": 0.24,
+            "b": 0.22,
+            "a": 1
+          },
+          "time": 0
+        },
+        {
+          "color": {
+            "r": 0.31,
+            "g": 0.44,
+            "b": 0.37,
+            "a": 1
+          },
+          "time": 1
+        }
+      ],
+      "alpha": [
+        {
+          "alpha": 1,
+          "time": 0
+        },
+        {
+          "alpha": 1,
+          "time": 1
+        }
+      ],
+      "mode": 0
+    },
+    "barkTextureGuid": "",
+    "barkTexturePath": "",
+    "foliageTextureGuid": "",
+    "foliageTexturePath": "",
+    "sibling": 0
   }
 }

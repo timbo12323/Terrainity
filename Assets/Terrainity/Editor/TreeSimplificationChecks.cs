@@ -34,6 +34,7 @@ namespace Terrainity.Editor
                 {
                     preview.Build(recipe, 0);
                     int full = preview.WoodTriangles;
+                    int fullVertices = preview.Meshes[0].vertexCount;
                     var leaves = preview.Meshes[1].vertices;
                     recipe.simplifyWood = true; recipe.simplificationTolerance = .002f;
                     var restored = TreeRecipeJson.From(recipe, 0).Restore(out _);
@@ -41,6 +42,8 @@ namespace Terrainity.Editor
                     preview.Build(recipe, 0);
                     Require(preview.WoodTriangles < full, "Live triangle reduction");
                     Require(preview.WoodTriangles + preview.RemovedWoodTriangles == full, "Accurate before/after statistics");
+                    Require(preview.Meshes[0].vertexCount + preview.RemovedWoodVertices == fullVertices,
+                        "Accurate removed vertex statistics");
                     Require(leaves.SequenceEqual(preview.Meshes[1].vertices), "Foliage unchanged");
                     foreach (var mesh in preview.Meshes)
                     {

@@ -35,6 +35,7 @@ namespace Terrainity.Editor
         Foldout trunkControls, rootControls, branchControls, foliageControls;
         Label previewCaption;
         Label meshStats;
+        Label simplificationStats;
         readonly Dictionary<string, bool> sectionStates = new Dictionary<string, bool>();
         readonly List<Button> tabs = new List<Button>();
         const string GeneratedRoot = "Assets/TerrainityGenerated";
@@ -128,6 +129,7 @@ namespace Terrainity.Editor
             parameterScroll = null;
             trunkControls = rootControls = branchControls = foliageControls = null;
             meshStats = null;
+            simplificationStats = null;
             preview?.Dispose();
             preview = null;
             for (int i = 0; i < tabs.Count; i++) tabs[i].EnableInClassList("selected", i == currentTab);
@@ -346,7 +348,19 @@ namespace Terrainity.Editor
                 IntSlider(crown, "Cards per cluster", 2, 12, recipe.foliageCards, x => recipe.foliageCards = x, "Number of double-sided textured cards in each cluster.");
                 IntSlider(crown, "Foliage subdivisions", 1, 12, recipe.foliageSubdivisions, x => recipe.foliageSubdivisions = x, "Lengthwise segments per card. One is a single quad; increase for smoother card bends. Each segment adds two front-face triangles.");
                 Slider(crown, "Card bend", -1, 1, recipe.foliageBend, x => recipe.foliageBend = x);
-                Slider(crown, "Card size", .25f, 3, recipe.foliageSize, x => recipe.foliageSize = x);
+                float cardSizeMax = Mathf.Clamp(recipe.foliageSize, .25f, 3);
+                float cardSizeMin = recipe.foliageSizeMin > 0
+                    ? Mathf.Clamp(recipe.foliageSizeMin, .25f, cardSizeMax) : cardSizeMax;
+                var cardSizeLabel = Text(crown, $"Card size: {cardSizeMin:0.##}–{cardSizeMax:0.##}", "small");
+                var cardSizeRange = new MinMaxSlider("Card size", cardSizeMin, cardSizeMax, .25f, 3);
+                cardSizeRange.tooltip = "Drag either handle to set the smallest and largest card size. Each card gets a seeded size in this range; equal values keep all cards the same size.";
+                cardSizeRange.RegisterValueChangedCallback(e => {
+                    recipe.foliageSizeMin = Mathf.Clamp(e.newValue.x, .25f, 3);
+                    recipe.foliageSize = Mathf.Clamp(e.newValue.y, recipe.foliageSizeMin, 3);
+                    cardSizeLabel.text = $"Card size: {recipe.foliageSizeMin:0.##}–{recipe.foliageSize:0.##}";
+                    Changed();
+                });
+                crown.Add(cardSizeRange);
                 Slider(crown, "Card width scale", .1f, 3, recipe.foliageWidthScale, x => recipe.foliageWidthScale = x);
                 Slider(crown, "Card height scale", .1f, 3, recipe.foliageHeightScale, x => recipe.foliageHeightScale = x);
                 Slider(crown, "Cluster spread", 0, 1, recipe.foliageSpread, x => recipe.foliageSpread = x);
@@ -411,7 +425,16 @@ namespace Terrainity.Editor
             MaterialToggle(surface, "Bark environment reflections", recipe.barkReflections, x => recipe.barkReflections = x);
             AddTip(surface, "Bark Texture U repeats around the trunk; Bark Texture V repeats per metre along it. A bark gradient replaces the solid tint from tree base to top; alpha is ignored. Roughness: 0 = glossy, 1 = rough. Specular highlights control shine from lights; environment reflections control reflected surroundings.");
             var detail = Fold(controls, "Mesh detail");
-            MaterialToggle(detail, "Live wood simplification", recipe.simplifyWood, x => recipe.simplifyWood = x);
+            var simplificationRow = Box(detail, "row simplification-row");
+            var simplificationToggle = new Toggle("Live wood simplification") { value = recipe.simplifyWood };
+            simplificationToggle.AddToClassList("simplification-toggle");
+            simplificationToggle.RegisterValueChangedCallback(e => { recipe.simplifyWood = e.newValue; Changed(); });
+            simplificationRow.Add(simplificationToggle);
+            simplificationStats = new Label("0 tris\n0 verts removed") {
+                tooltip = "Triangles and vertices removed from the current preview wood mesh. Foliage is unchanged."
+            };
+            simplificationStats.AddToClassList("simplification-stats");
+            simplificationRow.Add(simplificationStats);
             Slider(detail, "Simplification tolerance (mm)", .1f, 20, recipe.simplificationTolerance * 1000, x => recipe.simplificationTolerance = x / 1000);
             AddTip(detail, "Live simplification removes redundant lengthwise rings on the trunk and branches while keeping sockets, endpoints, UV seams, and shading transitions. Higher tolerance allows more shape change and can remove more triangles. Dense bark detail may limit reduction. Foliage cards are left intact. The simplified mesh is used in previews, exports, and LODs.");
             IntSlider(detail, "Radial subdivisions", 3, 12, recipe.branchSides, x => { recipe.trunkSides = recipe.branchSides = x; }, "Changes the number of sides around both trunk and branches together.");
@@ -838,6 +861,8 @@ namespace Terrainity.Editor
         void UpdateMeshStats(string geometryLabel)
         {
             if (meshStats == null || preview == null) return;
+            if (simplificationStats != null)
+                simplificationStats.text = $"{preview.RemovedWoodTriangles:N0} tris\n{preview.RemovedWoodVertices:N0} verts removed";
             int vertices = preview.Meshes.Sum(mesh => mesh.vertexCount);
             meshStats.text = $"Triangle Count: {preview.WoodTriangles + preview.FoliageTriangles:N0}\n"
                 + $"{geometryLabel}: {preview.WoodTriangles:N0} • Foliage: {preview.FoliageTriangles:N0}\n"

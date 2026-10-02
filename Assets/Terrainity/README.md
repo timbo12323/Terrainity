@@ -5,11 +5,11 @@ Open **Tools → Terrainity → Foliage Studio**. Unity 6 editor tool with baked
 ## Available now
 
 - Welcome, Asset builder and Generated library tabs, built with UI Toolkit.
-- Repeatable Pine, Oak, Birch and Maple concept previews; seed, trunk proportions, canopy, colors and sibling variation controls. Orbit by dragging and zoom by scrolling.
-- Species-specific branch rules with independently remembered settings. Controls progress from trunk and crown outline to branch structure, curvature, foliage and sibling variation. Upper limb lift changes the attachment angle along the trunk; downward weight bends long, thick limbs more strongly. Pine uses tiers and lateral shoots; oak uses broad forks; birch has slender limbs with drooping tips; maple has a broad crown. These are artistic presets, not botanical simulations.
+- Repeatable previews for 13 JSON tree families; seed, trunk proportions, canopy, roots, materials and sibling variation controls. Orbit by dragging and zoom by scrolling. See [family references](Family-References.md) for the reference species and visual limits.
+- Species-specific branch rules with independently remembered settings. Controls progress from trunk and crown outline to branch structure, curvature, foliage and sibling variation. Upper limb lift changes the attachment angle along the trunk; downward weight bends long, thick limbs more strongly. These are artistic presets, not botanical simulations.
 - Hide foliage to inspect the skeleton. Zero bend makes each limb straight; zero limbs leaves a bare trunk. Foliage follows branch endpoints. Preview rendering combines geometry into at most two meshes; branching is capped at 2,040 limbs (24 main limbs, four children per fork, three extra generations).
 - Bend sharpness changes a smooth arc into an angular elbow without changing the main limb endpoint. It has no effect at zero bend. Each species remembers its own sharpness value.
-- Trunk bend adds one to three alternating arcs. Bend sharpness blends smooth curves into angular elbows without changing their peak displacement. Trunk twist rotates the bends and branch placement gradually from base to tip (−360° to 360°); combine it with bending for a corkscrew silhouette. Zero bend and twist retain a straight, leaning trunk. Branch sockets follow the curved trunk's position, local direction and taper. Base position and tip height stay fixed.
+- Trunk bend adds one to nine alternating arcs. Bend sharpness blends smooth curves into angular elbows without changing their peak displacement. Trunk twist rotates the bends and branch placement gradually from base to tip (−720° to 720°); combine it with bending for a corkscrew silhouette. Zero bend and twist retain a straight, leaning trunk. Branch sockets follow the curved trunk's position, local direction and taper. Base position and tip height stay fixed.
 - Junction thickness uses the parent's tapered radius at the actual attachment. Child roots remain narrower than that radius; buried root rings and blended normals soften the visible join. These are connected-looking overlapping preview surfaces, **not welded/watertight topology**. Combining them into one render mesh does not remove internal faces; exported meshes retain the same overlapping junction topology.
 - Grass, rocks and bushes have descriptive placeholders.
 - Library search and category filtering, scoped to prefabs under `Assets/TerrainityGenerated` with the `TerrainityGenerated` asset label. No unrelated project assets are listed.
@@ -35,7 +35,7 @@ Unity Terrain uses registered prefab prototypes. Random mesh-changing scripts on
 3. Switch to Grass, Rocks and Bushes and back. Tree settings persist across tabs and script reloads.
 4. Confirm the library starts empty and no unrelated prefabs appear.
 5. Close and reopen the window; inspect the Console for errors or temporary mesh leaks.
-6. Run **Tools → Terrainity → Validate Branch Growth** for deterministic branch and trunk checks across all four families, recursion depths, zero variation, upper limb lift, weighted droop, straight/bent limbs, trunk bends, signed twist, socket attachment, spread and maximum limits. Inspect the Console for the PASS report.
+6. Run **Tools → Terrainity → Validate Family Library** to load all 13 defaults and check geometry round-trips and five siblings per family. Run **Validate Branch Growth** for deterministic branch and trunk checks. Inspect the Console for the PASS reports.
 7. Hide foliage, adjust branch settings, then switch families and return. Each family's branch values should be preserved. Restore branch defaults should affect only the selected family.
 
 ## Mesh detail and foliage cards

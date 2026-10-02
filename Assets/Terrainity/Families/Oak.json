@@ -4,28 +4,245 @@
   "profile": {
     "id": "oak",
     "name": "Oak",
-    "description": "Oak growth profile. Edit the family JSON to customize its growth rules.",
+    "description": "English oak (Quercus robur): stout short trunk, heavy spreading limbs and broad rounded crown.",
     "limbsPerWhorl": 1,
     "whorlRotation": 31,
     "branchRotation": 137.508,
-    "crownTipScale": 0.55,
-    "lift": 0.38,
+    "crownTipScale": 0.9,
+    "lift": 0.11,
     "liftExponent": 2,
-    "forkAngle": 38,
-    "childLengthScale": 0.62,
+    "forkAngle": 41,
+    "childLengthScale": 0.63,
     "foliageAspect": 1,
     "branches": {
       "depth": 3,
-      "minDepth": -1,
-      "subBranches": 2,
+      "minDepth": 2,
+      "subBranches": 3,
       "sharpness": 0,
-      "limbs": 9,
-      "spread": 1.15,
-      "bend": 0.55,
-      "angle": 58,
-      "upperAngleBias": 24,
-      "droop": 0.65,
-      "thickness": 0.65
-    }
+      "limbs": 10,
+      "spread": 1.08,
+      "bend": 0.48,
+      "angle": 73,
+      "upperAngleBias": 17,
+      "droop": 0.48,
+      "thickness": 0.72,
+      "taper": 0.62,
+      "attachmentThickness": 1.55
+    },
+    "crownEnd": 0.93,
+    "foliageForm": 0
+  },
+  "defaults": {
+    "format": "terrainity.recipe",
+    "version": 1,
+    "settings": {
+      "assetName": "Woodland Oak",
+      "species": "Oak",
+      "seed": 1842,
+      "height": 11,
+      "trunkRadius": 0.62,
+      "rootsEnabled": true,
+      "rootCount": 8,
+      "rootForks": 4,
+      "rootMinForkDepth": 1,
+      "rootMaxForkDepth": 2,
+      "rootBend": 0.25,
+      "rootSharpness": 0,
+      "rootSpread": 3.1,
+      "rootThickness": 0.68,
+      "rootTaper": 0.72,
+      "rootAttachmentHeight": 0.52,
+      "rootDepth": 0.45,
+      "floorHeight": 0,
+      "taper": 0.63,
+      "lean": 0.1,
+      "trunkBend": 0.18,
+      "trunkBends": 2,
+      "trunkSharpness": 0,
+      "trunkTwist": 12,
+      "crownWidth": 8.5,
+      "crownStart": 0.28,
+      "layers": 9,
+      "trunkSides": 10,
+      "trunkSegments": 18,
+      "branchSides": 10,
+      "branchSegments": 18,
+      "barkSurfaceDetail": 0.4,
+      "barkDetailScale": 1.6,
+      "barkDetailResolution": 2,
+      "simplifyWood": false,
+      "simplificationTolerance": 0.002,
+      "foliageCards": 4,
+      "foliageSubdivisions": 2,
+      "foliageBend": 0.08,
+      "foliageSize": 0.84,
+      "foliageSizeMin": 0.71,
+      "foliageWidthScale": 1.1,
+      "foliageHeightScale": 1,
+      "foliageSpread": 0.42,
+      "foliageCutoff": 0.4,
+      "foliageFeathering": 0.06,
+      "foliageSoftness": 0.62,
+      "foliageAlphaToCoverage": false,
+      "foliageTransmissionEnabled": true,
+      "foliageTransmission": 0.44,
+      "foliageOcclusion": 0.58,
+      "barkOcclusion": 0.52,
+      "foliageStemAttached": false,
+      "foliageStemPivot": {
+        "x": 0.5,
+        "y": 0
+      },
+      "foliageRotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "foliageFanAngle": 20,
+      "irregularity": 0.3,
+      "bark": {
+        "r": 0.35,
+        "g": 0.32,
+        "b": 0.25,
+        "a": 1
+      },
+      "barkTilingAround": 2.5,
+      "barkTilingLength": 1.6,
+      "leaves": {
+        "r": 0.22,
+        "g": 0.37,
+        "b": 0.16,
+        "a": 1
+      },
+      "foliageRoughness": 1,
+      "foliageHighlights": false,
+      "foliageReflections": false,
+      "barkRoughness": 0.97,
+      "barkHighlights": false,
+      "barkReflections": false,
+      "barkGradientEnabled": false,
+      "foliageGradientEnabled": true,
+      "foliageTintMode": 1,
+      "variantCount": 1,
+      "variation": 0.12,
+      "showFoliage": true,
+      "customBranches": {
+        "depth": 3,
+        "minDepth": 2,
+        "subBranches": 3,
+        "sharpness": 0,
+        "limbs": 10,
+        "spread": 1.08,
+        "bend": 0.48,
+        "angle": 73,
+        "upperAngleBias": 17,
+        "droop": 0.48,
+        "thickness": 0.72,
+        "taper": 0.62,
+        "attachmentThickness": 1.55
+      }
+    },
+    "family": {
+      "id": "oak",
+      "name": "Oak",
+      "description": "English oak (Quercus robur): stout short trunk, heavy spreading limbs and broad rounded crown.",
+      "limbsPerWhorl": 1,
+      "whorlRotation": 31,
+      "branchRotation": 137.508,
+      "crownTipScale": 0.9,
+      "lift": 0.11,
+      "liftExponent": 2,
+      "forkAngle": 41,
+      "childLengthScale": 0.63,
+      "foliageAspect": 1,
+      "branches": {
+        "depth": 3,
+        "minDepth": 2,
+        "subBranches": 3,
+        "sharpness": 0,
+        "limbs": 10,
+        "spread": 1.08,
+        "bend": 0.48,
+        "angle": 73,
+        "upperAngleBias": 17,
+        "droop": 0.48,
+        "thickness": 0.72,
+        "taper": 0.62,
+        "attachmentThickness": 1.55
+      },
+      "crownEnd": 0.93,
+      "foliageForm": 0
+    },
+    "barkGradient": {
+      "colors": [
+        {
+          "color": {
+            "r": 0.24,
+            "g": 0.23,
+            "b": 0.19,
+            "a": 1
+          },
+          "time": 0
+        },
+        {
+          "color": {
+            "r": 0.43,
+            "g": 0.4,
+            "b": 0.33,
+            "a": 1
+          },
+          "time": 1
+        }
+      ],
+      "alpha": [
+        {
+          "alpha": 1,
+          "time": 0
+        },
+        {
+          "alpha": 1,
+          "time": 1
+        }
+      ],
+      "mode": 0
+    },
+    "foliageGradient": {
+      "colors": [
+        {
+          "color": {
+            "r": 0.15,
+            "g": 0.29,
+            "b": 0.12,
+            "a": 1
+          },
+          "time": 0
+        },
+        {
+          "color": {
+            "r": 0.34,
+            "g": 0.46,
+            "b": 0.21,
+            "a": 1
+          },
+          "time": 1
+        }
+      ],
+      "alpha": [
+        {
+          "alpha": 1,
+          "time": 0
+        },
+        {
+          "alpha": 1,
+          "time": 1
+        }
+      ],
+      "mode": 0
+    },
+    "barkTextureGuid": "",
+    "barkTexturePath": "",
+    "foliageTextureGuid": "",
+    "foliageTexturePath": "",
+    "sibling": 0
   }
 }

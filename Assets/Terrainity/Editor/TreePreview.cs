@@ -40,6 +40,7 @@ namespace Terrainity.Editor
         readonly Texture2D[] tintRamps = new Texture2D[2];
         internal int WoodTriangles { get; private set; }
         internal int RemovedWoodTriangles { get; private set; }
+        internal int RemovedWoodVertices { get; private set; }
         internal int FoliageTriangles { get; private set; }
         internal IReadOnlyList<Mesh> Meshes => meshes;
         internal Material MaterialForMesh(int index) => materials[materialIndices[index]];
@@ -175,6 +176,7 @@ namespace Terrainity.Editor
         internal void Build(TreeRecipe recipe, int variant)
         {
             RemovedWoodTriangles = 0;
+            RemovedWoodVertices = 0;
             previousRock = null;
             ClearMeshes();
             if (materials[0] == null) return;
@@ -216,11 +218,12 @@ namespace Terrainity.Editor
                     int clusters = Mathf.Clamp(Mathf.RoundToInt(recipe.layers / 3f), 1, 4);
                     for (int i = 0; i < clusters; i++)
                     {
-                        random = new System.Random(unchecked(recipe.seed ^ limbIndex * 104729 ^ i * 7919));
+                        int clusterSeed = unchecked(recipe.seed ^ limbIndex * 104729 ^ i * 7919);
+                        random = new System.Random(clusterSeed);
                         int socket = limb.points.Length - 1 - i * 2;
                         var center = limb.points[socket];
                         var direction = (limb.points[Mathf.Min(socket + 1, limb.points.Length - 1)] - limb.points[Mathf.Max(socket - 1, 0)]).normalized;
-                        LeafCards(recipe, center, direction, foliageSize);
+                        LeafCards(recipe, center, direction, foliageSize, clusterSeed);
                     }
                 }
             }
@@ -373,6 +376,7 @@ namespace Terrainity.Editor
             int result = TreeMeshSimplifier.Simplify(vertices, normals, uv, sides, samples, protectedSamples,
                 Mathf.Clamp(recipe.simplificationTolerance, .0001f, .02f));
             RemovedWoodTriangles += (samples.Count - result) * sides * 2;
+            RemovedWoodVertices += (samples.Count - result) * (sides + 1);
             return result;
         }
 
@@ -762,21 +766,25 @@ namespace Terrainity.Editor
             meshes.Add(mesh); materialIndices.Add(1); sourceParts.Add(TreePreviewPart.Foliage);
         }
 
-        void LeafCards(TreeRecipe recipe, Vector3 center, Vector3 branchDirection, float size)
+        void LeafCards(TreeRecipe recipe, Vector3 center, Vector3 branchDirection, float size, int clusterSeed)
         {
             var vertices = new List<Vector3>(); var triangles = new List<int>();
             var normals = new List<Vector3>(); var uv = new List<Vector2>();
             int cards = Mathf.Clamp(recipe.foliageCards, 2, 12);
             float phase = Range(0, 360);
+            float maxSize = Mathf.Clamp(recipe.foliageSize, .25f, 3);
+            float minSize = recipe.foliageSizeMin > 0 ? Mathf.Clamp(recipe.foliageSizeMin, .25f, maxSize) : maxSize;
+            var sizeRandom = new System.Random(unchecked(clusterSeed ^ 0x5F3759DF));
             for (int i = 0; i < cards; i++)
             {
-                // Golden-angle orientations spread fixed cards around the volume for all viewing angles.
+                float cardSize = minSize == maxSize ? size : size * Mathf.Lerp(minSize / maxSize, 1, (float)sizeRandom.NextDouble());
+                // Golden-angle orientations spread cards around the volume for all viewing angles.
                 float y = 1 - 2 * (i + .5f) / cards;
                 float angle = (phase + i * 137.508f) * Mathf.Deg2Rad;
                 float radius = Mathf.Sqrt(1 - y * y);
                 var outward = new Vector3(Mathf.Cos(angle) * radius, y, Mathf.Sin(angle) * radius);
                 var rotation = Quaternion.LookRotation(outward) * Quaternion.AngleAxis(Range(-35, 35), Vector3.forward);
-                var offset = outward * size * Mathf.Clamp01(recipe.foliageSpread);
+                var offset = outward * cardSize * Mathf.Clamp01(recipe.foliageSpread);
                 var pivot = new Vector2(.5f, .5f);
                 if (recipe.foliageStemAttached)
                 {
@@ -790,14 +798,14 @@ namespace Terrainity.Editor
                     pivot = new Vector2(Mathf.Clamp01(recipe.foliageStemPivot.x), Mathf.Clamp01(recipe.foliageStemPivot.y));
                 }
                 else rotation *= Quaternion.Euler(recipe.foliageRotation);
-                var right = rotation * Vector3.right * size * Range(.8f, 1.2f);
-                var up = rotation * Vector3.up * size * recipe.Profile.foliageAspect;
+                var right = rotation * Vector3.right * cardSize * Range(.8f, 1.2f);
+                var up = rotation * Vector3.up * cardSize * recipe.Profile.foliageAspect;
                 if (recipe.foliageStemAttached)
                 {
                     var texture = recipe.foliageTexture != null ? recipe.foliageTexture : defaultFoliage;
                     float aspect = texture != null ? (float)texture.width / texture.height : 1;
-                    right = rotation * Vector3.right * size * aspect;
-                    up = rotation * Vector3.up * size;
+                    right = rotation * Vector3.right * cardSize * aspect;
+                    up = rotation * Vector3.up * cardSize;
                 }
                 right *= Mathf.Clamp(recipe.foliageWidthScale, .1f, 3);
                 up *= Mathf.Clamp(recipe.foliageHeightScale, .1f, 3);
@@ -815,7 +823,7 @@ namespace Terrainity.Editor
                             + forward * (up.magnitude * 2 * bend * along * along);
                         vertices.Add(position); uv.Add(coordinate);
                         var corner = right * (2 * coordinate.x - 1) + up * (2 * coordinate.y - 1);
-                        normals.Add((outward * size + corner * .35f - up.normalized * (size * 2 * bend * along)).normalized);
+                        normals.Add((outward * cardSize + corner * .35f - up.normalized * (cardSize * 2 * bend * along)).normalized);
                     }
                     triangles.AddRange(new[] { first, first + 1, first + 2, first, first + 2, first + 3 });
                     if (!materials[1].HasProperty("_Cull"))

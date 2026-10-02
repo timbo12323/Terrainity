@@ -46,6 +46,10 @@
 .terrainity .preview-option { flex-direction: row-reverse; flex-grow: 0; margin-right: 14px; }
 .terrainity .preview-option .unity-base-field__label { min-width: 0; width: auto; margin-left: 5px; margin-right: 0; }
 .terrainity .preview-option .unity-base-field__input { flex-grow: 0; }
+.terrainity .simplification-toggle { width: 175px; flex-grow: 0; flex-shrink: 0; }
+.terrainity .simplification-toggle .unity-base-field__label { min-width: 0; width: auto; }
+.terrainity .simplification-toggle .unity-base-field__input { flex-grow: 0; }
+.simplification-stats { flex-grow: 1; flex-basis: 0; min-width: 0; margin-left: 5px; font-size: 11px; color: #c5d9ac; white-space: normal; }
 .terrainity Foldout { margin-top: 14px; margin-bottom: 8px; }
 .terrainity .unity-foldout__text { color: #c6d5be; -unity-font-style: bold; }
 .small { font-size: 11px; color: #9dad9f; white-space: normal; margin-top: 8px; margin-bottom: 8px; }

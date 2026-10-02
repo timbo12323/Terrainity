@@ -45,10 +45,24 @@ namespace Terrainity.Editor
                         try { Require(lod.vertexCount % 24 == 0 && lod.triangles.Length / 3 == lod.vertexCount / 2 && lod.uv.All(p=>p.x>=0&&p.x<=1&&p.y>=0&&p.y<=1), "LODs retain complete subdivided cards"); }
                         finally { UnityEngine.Object.DestroyImmediate(lod); }
                     }
+                    recipe.foliageSizeMin = recipe.foliageSize;
+                    preview.Build(recipe, 0);
+                    var fixedSize = preview.Meshes[1].vertices;
+                    recipe.foliageSizeMin = .5f;
+                    preview.Build(recipe, 0);
+                    var variedSize = preview.Meshes[1].vertices;
+                    Require(!fixedSize.SequenceEqual(variedSize), "Card size range changes geometry");
+                    preview.Build(recipe, 0);
+                    Require(variedSize.SequenceEqual(preview.Meshes[1].vertices), "Card size variation is seeded");
                     var restored = TreeRecipeJson.From(recipe, 0).Restore(out _);
-                    Require(restored.foliageSubdivisions == 6 && restored.foliageBend == .8f, "JSON round-trip");
+                    Require(restored.foliageSubdivisions == 6 && restored.foliageBend == .8f
+                        && restored.foliageSizeMin == .5f && restored.foliageSize == recipe.foliageSize, "JSON round-trip");
+                    var oldRecipe = TreeRecipeJson.From(recipe, 0);
+                    oldRecipe.settings.foliageSizeMin = 0;
+                    var oldRestored = oldRecipe.Restore(out _);
+                    Require(oldRestored.foliageSizeMin == oldRestored.foliageSize, "Legacy fixed card size");
                 }
-                File.WriteAllText("Temp/tree-foliage-checks.txt", "PASS: triangle counts, original corners, curved geometry, stem attachment, seamless subdivisions, consistent card tint, complete LOD cards, JSON round-trip.");
+                File.WriteAllText("Temp/tree-foliage-checks.txt", "PASS: triangle counts, original corners, curved geometry, stem attachment, seamless subdivisions, consistent card tint, complete LOD cards, seeded card size range, JSON round-trip.");
             }
             catch (Exception e) { File.WriteAllText("Temp/tree-foliage-checks.txt", "FAIL: " + e); Debug.LogException(e); }
         }
