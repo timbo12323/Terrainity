@@ -40,7 +40,7 @@ Use **Delete prefab** beside a Generated library entry, then confirm the display
 
 ## Current limits
 
-Exports optionally include three mesh LODs with dithered transitions. See [Tree LODs](Tree-LOD.md) for the research, controls, reduction method and review workflow. Whole-tree billboards and Wind Zone animation are not generated. Existing foliage cards remain fixed in space. Use mesh detail and branch/card density controls to tune the budget before generating large forests. Junctions retain overlapping surfaces.
+Exports optionally include three mesh LODs with dithered transitions. See [Tree LODs](Tree-LOD.md) for the research, controls, reduction method and review workflow. The Terrainity/Tree shader animates branches and foliage from active Unity Wind Zones at runtime; the package includes TreeWindController, which bridges Wind Zone settings to the shader. Directional zones affect the scene and up to four spherical zones contribute within their radii. Whole-tree billboards are not generated. Use mesh detail and branch/card density controls to tune the budget before generating large forests. Junctions retain overlapping surfaces.
 
 The runtime shader has URP lighting, cutout shadow/depth passes, instancing and Terrain tree tint support. A Built-in fallback is supplied; validation was performed in this project's URP configuration. HDRP is not supported.
 

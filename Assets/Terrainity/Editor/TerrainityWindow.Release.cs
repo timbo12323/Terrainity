@@ -11,9 +11,9 @@ namespace Terrainity.Editor
         [Serializable]
         sealed class GitHubRelease
         {
-            public string name;
-            public string tag_name;
-            public string body;
+            public string name = "";
+            public string tag_name = "";
+            public string body = "";
         }
 
         Label latestReleaseLabel;
@@ -27,6 +27,7 @@ namespace Terrainity.Editor
             try
             {
                 releaseRequest = UnityWebRequest.Get("https://api.github.com/repos/timbo12323/Terrainity/releases/latest");
+                releaseRequest.timeout = 10; // Avoid retaining a stalled request until the window closes.
                 releaseRequest.SetRequestHeader("Accept", "application/vnd.github+json");
                 releaseRequest.SetRequestHeader("User-Agent", "Terrainity-Unity-Editor");
                 releaseRequest.SendWebRequest();

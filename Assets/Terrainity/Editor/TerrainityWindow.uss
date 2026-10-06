@@ -1,11 +1,9 @@
 .terrainity { flex-grow: 1; min-height: 0; background-color: #19211f; color: #e4ebe5; }
 .header { flex-shrink: 0; padding: 22px 26px 16px; flex-direction: row; align-items: center; }
-.brand { font-size: 24px; -unity-font-style: bold; color: #d9ecc4; }
+.brand { font-size: 30px; -unity-text-align: upper-left; -unity-font-style: bold; color: #d9ecc4; }
 .eyebrow { font-size: 10px; color: #a9c18e; margin-bottom: 7px; letter-spacing: 2px; }
-.subtitle { color: #a3b2aa; margin-top: 5px; white-space: normal; }
 .release-summary { color: #c5d9ac; margin-top: 4px; white-space: normal; }
 .grow { flex-grow: 1; }
-.badge { background-color: #303e32; color: #c5d9ac; padding: 6px 10px; border-radius: 5px; }
 .tabs { flex-shrink: 0; flex-direction: row; padding: 0 24px 12px; border-bottom-width: 1px; border-bottom-color: #39443d; }
 .terrainity Button { background-color: #303d36; color: #e4ebe5; border-width: 1px; border-color: #48574b; border-radius: 5px; padding: 7px 12px; margin: 3px; }
 .terrainity Button:hover { background-color: #455643; }
@@ -30,8 +28,21 @@
 .preview-panel { flex-grow: 1; flex-basis: 0; min-width: 220px; padding: 18px; }
 .preview { position: relative; height: 320px; flex-shrink: 0; background-color: #202923; border-radius: 8px; }
 .preview-stats { position: absolute; right: 10px; bottom: 10px; max-width: 90%; color: #ffffff; font-size: 11px; -unity-text-align: lower-right; white-space: normal; }
-.floor-height-overlay { position: absolute; left: 12px; bottom: 12px; height: 25%; min-height: 45px; flex-direction: row; align-items: flex-end; opacity: 0.1; }
-.floor-height-overlay:hover { opacity: 0.8; }
+.preview-stats-increase { color: #ed7777; }
+.preview-stats-decrease { color: #83d996; }
+.preview-view-tabs { margin-bottom: 12px; }
+.preview-lod-label { position: absolute; left: 12px; top: 10px; color: #ffffff; -unity-font-style: bold; font-size: 15px; background-color: #26372b; padding: 5px 9px; border-radius: 4px; }
+.floor-height-overlay { position: absolute; left: 12px; bottom: 12px; height: 34%; min-height: 86px; flex-direction: column; align-items: flex-start; }
+.floor-height-row { flex-direction: row; align-items: flex-end; flex-grow: 1; min-height: 0; opacity: 0.1; }
+.floor-height-row:hover { opacity: 0.8; }
+.prune-tree-row { flex-direction: row; align-items: center; margin-bottom: 5px; opacity: 0.1; }
+.prune-tree-row:hover { opacity: 0.8; }
+.prune-tree-toggle { width: 27px; flex-grow: 0; background-color: #26372b; padding: 3px 5px; border-radius: 4px; }
+.prune-tree-toggle .unity-base-field__label { display: none; }
+.prune-tree-toggle .unity-base-field__input { flex-grow: 0; }
+.prune-tree-label { margin-left: 6px; color: #d9ecc4; font-size: 10px; -unity-font-style: bold; }
+.reset-prune-host { position: absolute; bottom: 12px; left: 0; right: 0; align-items: center; }
+.reset-prune { background-color: #26372b; color: #e4f1df; -unity-font-style: bold; }
 .floor-height-track { height: 100%; padding: 12px 5px 8px; background-color: #26372b; border-width: 1px; border-color: #788b72; border-radius: 8px; }
 .terrainity .floor-height-slider { width: 18px; flex-grow: 1; min-height: 0; margin: 0; }
 .floor-height-slider .unity-base-slider__tracker { background-color: #455643; }
@@ -41,6 +52,12 @@
 .preview-resize-handle:hover { background-color: #394b3e; color: #d3ddd5; }
 .preview-panel Label, .preview-panel Button, .preview-panel .row, .preview-panel .card { flex-shrink: 0; }
 .footer { flex-shrink: 0; padding: 10px 24px; background-color: #151c18; color: #a3b2aa; border-top-width: 1px; border-top-color: #39443d; white-space: normal; }
+.terrainity .footer-vertices { flex-grow: 0; margin: 0 18px 0 0; }
+.terrainity .footer-vertices .unity-base-field__label { min-width: 0; width: auto; margin-right: 7px; }
+.terrainity .footer-vertices .unity-base-field__input { flex-grow: 0; }
+.footer-delta { -unity-font-style: bold; font-size: 12px; }
+.footer-delta-increase { color: #ed7777; }
+.footer-delta-decrease { color: #83d996; }
 .terrainity .unity-base-field { margin-top: 5px; margin-bottom: 8px; }
 .terrainity .unity-base-field__label { min-width: 118px; color: #d3ddd5; }
 .terrainity .preview-option { flex-direction: row-reverse; flex-grow: 0; margin-right: 14px; }
@@ -72,4 +89,3 @@
 .light-rotation-dial { height: 180px; flex-shrink: 0; }
 .light-rotation-dial:focus { background-color: #29382f; }
 #lighting-title { font-size: 11px; -unity-font-style: bold; margin-bottom: 10px; }
-#lighting-note { font-size: 10px; color: #9dad9f; margin-top: 10px; white-space: normal; }

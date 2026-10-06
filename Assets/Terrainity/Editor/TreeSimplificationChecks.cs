@@ -55,7 +55,7 @@ namespace Terrainity.Editor
                     preview.Build(recipe, 0);
                     for (int level = 1; level <= 2; level++)
                     {
-                        var lod = TreeLodGenerator.Build(recipe, 0, level, preview.Meshes[1], new TreeLodSettings());
+                        var lod = TreeLodGenerator.Build(recipe, 0, level, new TreeLodSettings());
                         try { Require(lod.vertexCount > 0 && lod.triangles.All(i => i < lod.vertexCount && i >= 0), "Valid simplified LOD"); }
                         finally { UnityEngine.Object.DestroyImmediate(lod); }
                     }

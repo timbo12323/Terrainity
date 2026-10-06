@@ -93,6 +93,8 @@ namespace Terrainity.Editor
                 Require(AssetDatabase.GetDependencies(AssetDatabase.GetAssetPath(first.prefabs[0]), true)
                     .Contains("Assets/Terrainity/Shaders/RockTriplanar.shader"), "Exported prefab must depend on the runtime box shader");
                 Material shared = first.prefabs[0].GetComponent<MeshRenderer>().sharedMaterial;
+                TreeExporter.ExportPackage(first.folder, Path.GetFullPath("Temp/TerrainityRockExportCheck.unitypackage"));
+                Require(File.Exists("Temp/TerrainityRockExportCheck.unitypackage"), "Rock package export");
                 foreach (var prefab in first.prefabs.Concat(second.prefabs))
                 {
                     var lodGroup = prefab.GetComponent<LODGroup>();

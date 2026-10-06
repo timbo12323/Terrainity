@@ -9,8 +9,9 @@
         <ui:VisualElement name="parameterDivider" class="parameter-divider" tooltip="Drag left or right to resize the parameter menu. Double-click to reset." />
         <ui:ScrollView name="builderPreviewPanel" class="preview-panel">
           <ui:VisualElement name="builderPreviewContent">
+            <ui:VisualElement name="previewTabs" class="preview-view-tabs row hidden" />
             <ui:VisualElement class="row">
-              <ui:Label text="LIVE SHAPE STUDY" class="eyebrow" />
+              <ui:Label name="previewHeading" text="LIVE SHAPE STUDY" class="eyebrow" />
               <ui:VisualElement name="previewHelp" class="row grow" />
             </ui:VisualElement>
             <ui:Label name="previewCaption" class="section-title" />

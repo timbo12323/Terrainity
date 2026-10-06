@@ -13,6 +13,7 @@ namespace Terrainity.Editor
         {
             try
             {
+                CheckIndependentBends();
                 var socketRecipe = new TreeRecipe { branchSides = 8, branchSegments = 12, barkSurfaceDetail = 0 };
                 socketRecipe.Branches.attachmentThickness = 2;
                 foreach (float angle in new[] { 45f, 90f, 115f, 160f })
@@ -130,10 +131,10 @@ namespace Terrainity.Editor
                     Require(foliage.Zip(preview.Meshes[1].vertices, (a,b) => (a - Vector3.up * .7f - b).sqrMagnitude < 1e-10f).All(x=>x), "Foliage ground offset");
                     for (int level = 1; level <= 2; level++)
                     {
-                        var shifted = TreeLodGenerator.Build(recipe, 0, level, preview.Meshes[1], new TreeLodSettings());
+                        var shifted = TreeLodGenerator.Build(recipe, 0, level, new TreeLodSettings());
                         recipe.floorHeight = 0;
                         preview.Build(recipe, 0);
-                        var original = TreeLodGenerator.Build(recipe, 0, level, preview.Meshes[1], new TreeLodSettings());
+                        var original = TreeLodGenerator.Build(recipe, 0, level, new TreeLodSettings());
                         Require(original.vertices.Zip(shifted.vertices, (a,b)=>(a - Vector3.up * .7f - b).sqrMagnitude < 1e-9f).All(x=>x), "LOD ground offset");
                         UnityEngine.Object.DestroyImmediate(shifted); UnityEngine.Object.DestroyImmediate(original);
                         recipe.floorHeight = .7f; preview.Build(recipe, 0);
@@ -148,10 +149,81 @@ namespace Terrainity.Editor
                     File.WriteAllBytes("Temp/tree-roots-preview.png", image.EncodeToPNG());
                     UnityEngine.Object.DestroyImmediate(image);
                 }
-                File.WriteAllText("Temp/tree-root-checks.txt", "PASS: 45/90/115/160-degree limb sockets without backward faces, tight elbow ring separation, sharp bent/twisted trunk with thick detailed roots, root bending, recursive sockets, fork ranges, determinism, JSON, unchanged foliage, floor/LOD alignment.");
+                File.WriteAllText("Temp/tree-root-checks.txt", "PASS: independently varied root bend profiles and peak locations, fixed sockets/tips/depth, zero-bend compatibility, random bend corners retained in simplified meshes, 45/90/115/160-degree limb sockets, sharp bent/twisted trunk and detailed roots, recursive sockets, fork ranges, determinism, JSON, unchanged foliage, floor/LOD alignment.");
             }
             catch (Exception e) { File.WriteAllText("Temp/tree-root-checks.txt", "FAIL: " + e); Debug.LogException(e); }
         }
         static void Require(bool condition, string message) { if (!condition) throw new Exception(message); }
+
+        static void CheckIndependentBends()
+        {
+            var recipe = new TreeRecipe { rootsEnabled = true, rootCount = 12, rootForks = 0,
+                height = 5, rootSpread = 2, rootAttachmentHeight = .6f, rootDepth = .5f };
+            var trunk = new TreeTrunkGrowth(recipe, Vector3.up * recipe.height);
+            var original = TreeRootGrowth.Generate(recipe, trunk, 1, 0);
+            recipe.rootBend = .8f;
+            var bent = TreeRootGrowth.Generate(recipe, trunk, 1, 0);
+            var repeated = TreeRootGrowth.Generate(recipe, trunk, 1, 0);
+            var signatures = new System.Collections.Generic.List<float[]>();
+            var peaks = new System.Collections.Generic.HashSet<int>();
+            for (int root = 0; root < bent.Count; root++)
+            {
+                var before = original[root].points;
+                var after = bent[root].points;
+                Require(after.SequenceEqual(repeated[root].points), "Repeatable independent root bends");
+                Require(after[0] == before[0] && after.Last() == before.Last(), "Random bends preserve socket and tip");
+                var side = Vector3.Cross(Vector3.up, before.Last() - before[0]).normalized;
+                float length = Vector3.Distance(before[0], before.Last());
+                var signature = new float[after.Length];
+                int peak = 0;
+                for (int point = 0; point < after.Length; point++)
+                {
+                    Require(after[point].y == before[point].y, "Random bending preserves root depth");
+                    signature[point] = Vector3.Dot(after[point] - before[point], side) / length;
+                    if (Mathf.Abs(signature[point]) > Mathf.Abs(signature[peak])) peak = point;
+                }
+                // Compare absolute profiles: a sign flip alone still counts as a mirrored bend.
+                foreach (var previous in signatures)
+                    Require(signature.Zip(previous, (a,b) => Mathf.Abs(Mathf.Abs(a) - Mathf.Abs(b))).Sum() > .01f,
+                        "Roots share a mirrored bend profile");
+                signatures.Add(signature); peaks.Add(peak);
+            }
+            Require(peaks.Count >= 3, "Root bends concentrate at the same distance from the trunk");
+            var meshRecipe = recipe.Copy();
+            meshRecipe.rootSharpness = 1;
+            meshRecipe.branchSegments = 2;
+            meshRecipe.simplifyWood = meshRecipe.lodAggressiveWood = true;
+            meshRecipe.simplificationTolerance = .15f;
+            var sharp = TreeRootGrowth.Generate(meshRecipe, trunk, 1, 0);
+            using (var preview = new TreePreview())
+            {
+                var emit = typeof(TreePreview).GetMethod("CurvedLimb", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                for (int root = 0; root < sharp.Count; root++)
+                {
+                    emit.Invoke(preview, new object[] { meshRecipe, sharp, root });
+                    var mesh = preview.Meshes[root];
+                    int stride = meshRecipe.branchSides + 1;
+                    int rings = mesh.vertexCount / stride - 2;
+                    var uv = mesh.uv;
+                    // Check emitted rings, including aggressive simplification, at the seeded corners.
+                    foreach (float bendPeak in new[] { sharp[root].rootBendPeaks.x, sharp[root].rootBendPeaks.y })
+                    {
+                        float ring = bendPeak * TreeBranchGrowth.Segments;
+                        foreach (float t in new[] { Mathf.Floor(ring) / TreeBranchGrowth.Segments, Mathf.Ceil(ring) / TreeBranchGrowth.Segments })
+                        {
+                            float distance = TreePreview.ArcLength(sharp[root].points, t);
+                            Require(Enumerable.Range(0, rings).Any(i => Mathf.Abs(uv[i * stride].y - distance) < .00001f),
+                                "Simplified root mesh lost a random bend corner");
+                        }
+                    }
+                }
+            }
+            var sibling = TreeRootGrowth.Generate(recipe, trunk, 1, 1);
+            Require(!bent[0].points.SequenceEqual(sibling[0].points), "Sibling changes root variation");
+            recipe.rootBend = 0;
+            var disabled = TreeRootGrowth.Generate(recipe, trunk, 1, 0);
+            for (int root = 0; root < original.Count; root++)
+                Require(original[root].points.SequenceEqual(disabled[root].points), "Zero bend restores original root paths");
+        }
     }
 }

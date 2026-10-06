@@ -7,7 +7,7 @@ namespace Terrainity.Editor
     internal static class TreeMeshSimplifier
     {
         internal static int Simplify(List<Vector3> vertices, List<Vector3> normals, List<Vector2> uv,
-            int sides, List<float> samples, List<float> protectedSamples, float tolerance)
+            int sides, List<float> samples, List<float> protectedSamples, float tolerance, float normalTolerance = .015f)
         {
             int stride = sides + 1, count = samples.Count;
             if (count <= 2) return count;
@@ -31,7 +31,7 @@ namespace Terrainity.Editor
                         float error = Vector3.Distance(vertices[v], Vector3.Lerp(vertices[a], vertices[b], t)) / limit;
                         // Preserve shading transitions as well as vertex positions.
                         var interpolatedNormal = Vector3.Lerp(normals[a], normals[b], t).normalized;
-                        error = Mathf.Max(error, (1 - Vector3.Dot(normals[v], interpolatedNormal)) / .015f);
+                        error = Mathf.Max(error, (1 - Vector3.Dot(normals[v], interpolatedNormal)) / normalTolerance);
                         if (error > worst) { worst = error; split = ring; }
                     }
                 }

@@ -48,7 +48,7 @@ namespace Terrainity.Editor
                     int previous = detailedCount;
                     for (int level = 1; level <= 2; level++)
                     {
-                        var lod = TreeLodGenerator.Build(recipe, 0, level, null, new TreeLodSettings());
+                        var lod = TreeLodGenerator.Build(recipe, 0, level, new TreeLodSettings());
                         try { int triangles = (int)lod.GetIndexCount(0) / 3; Require(triangles < previous, "LOD triangle reduction"); previous = triangles; }
                         finally { UnityEngine.Object.DestroyImmediate(lod); }
                     }

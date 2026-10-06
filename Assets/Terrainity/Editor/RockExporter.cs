@@ -11,11 +11,12 @@ namespace Terrainity.Editor
 {
     internal static class RockExporter
     {
+        internal const string OutputRoot = "Assets/TerrainityGenerated/Rocks";
         internal static TreeExporter.Result Generate(RockRecipe source, bool showProgress = true)
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode) throw new InvalidOperationException("Generate rocks outside Play mode.");
             var recipe = source.Copy(); recipe.Validate();
-            const string output = "Assets/TerrainityGenerated/Rocks";
+            const string output = OutputRoot;
             TreeExporter.EnsureFolder(output);
             string stem = TreeExporter.SafeName(recipe.assetName);
             string folder = AssetDatabase.GenerateUniqueAssetPath(output + "/" + stem);
@@ -41,7 +42,7 @@ namespace Terrainity.Editor
                         var mesh = RockGenerator.Build(recipe, sibling, level); mesh.name = name + "_LOD" + level;
                         try { AssetDatabase.CreateAsset(mesh, folder + "/Models/" + mesh.name + ".asset"); }
                         catch { UnityEngine.Object.DestroyImmediate(mesh); throw; }
-                        meshes.Add(mesh); report.AppendLine($"{name},{level},{mesh.triangles.Length / 3}");
+                        meshes.Add(mesh); report.AppendLine($"{name},{level},{TerrainityMeshUtility.TriangleCount(mesh)}");
                     }
                     var scene = EditorSceneManager.NewPreviewScene(); GameObject root = null;
                     try

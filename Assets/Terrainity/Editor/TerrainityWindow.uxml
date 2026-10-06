@@ -1,9 +1,9 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
-    <Style src="project://database/Assets/Terrainity/Editor/TerrainityWindow.uss?fileID=7433441132597879392&amp;guid=5a21fd46bc531ca46b1fe16e4d5f114b&amp;type=3#TerrainityWindow"/>
+    <ui:Style src="TerrainityWindow.uss"/>
     <ui:VisualElement class="terrainity">
         <ui:VisualElement class="header">
             <ui:VisualElement class="grow">
-                <ui:Label text="T E R R A I N I T Y" class="brand" style="scale: 1 1; -unity-text-align: upper-left; font-size: 30px;"/>
+                <ui:Label text="T E R R A I N I T Y" class="brand"/>
                 <ui:Label name="latestRelease" text="Checking latest GitHub release…" class="release-summary"/>
             </ui:VisualElement>
         </ui:VisualElement>
@@ -39,6 +39,9 @@
         </ui:VisualElement>
         <ui:VisualElement name="builderSlot" class="page hidden"/>
         <ui:VisualElement name="librarySlot" class="page hidden"/>
-        <ui:Label name="status" text="Tree workshop • Shape, save and generate Terrain-ready families." class="footer"/>
+        <ui:VisualElement name="footerMetrics" class="footer row">
+            <ui:Toggle name="footerVertices" label="Vertices" class="footer-vertices"/>
+            <ui:Label name="footerDelta" text="0 Triangles" class="footer-delta"/>
+        </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

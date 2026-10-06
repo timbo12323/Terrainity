@@ -12,7 +12,7 @@ Enable **Generate LOD models** under Destination / Paint Trees. **LOD settings**
 | LOD2 screen height | 0.12 | Use the simplest mesh below 12% |
 | Cull screen height | 0.01 | Stop rendering below 1% |
 | Far foliage retained | 0.50 | Retain roughly half the cards per cluster in LOD2, with at least two |
-| Leaf size compensation | 0.15 | Enlarge surviving far cards 15%, half that in LOD1 |
+| Leaf size compensation | 0.15 | Scale surviving cards to replace lost visible area; 0 disables growth |
 | Dithered transitions | On | Fade between levels across 15% of each LOD interval |
 
 These are starting values, not universal optimal distances. Camera field of view, object scale, Unity Quality LOD Bias, Terrain tree distance and resolution affect the visible result. The export has three meshes per sibling, one root LODGroup, the full-detail renderer on the root, and child renderers for LOD1/LOD2. All levels use the same materials and textures. Colliders stay on the root and do not change with visual LOD.
@@ -21,13 +21,15 @@ These are starting values, not universal optimal distances. Camera field of view
 
 ## How reduction works
 
-**Wood:** regenerate from the same seed and growth skeleton, with approximately 70% and 40% of the radial/longitudinal resolution. Keep all branches, sockets, sharp bend samples and tips. Minimums are three sides and two segments. These are resolution factors, not triangle targets: attachment rings and minimums limit reduction. Strong curvature may need more source subdivisions.
+**Wood:** regenerate from the same seed and growth skeleton, with approximately 70% and 40% of the radial/longitudinal resolution. Rank terminal child branches by their radial position and length within canopy-height bands, with a small seeded tie-breaker. At LOD1, roughly the least exposed 10% disappear and the next branches through 35% shrink toward their parent sockets. At LOD2, roughly the least exposed 30% disappear and the next branches through 50% shrink farther. Counts round down, and very small canopies may keep every branch. The subsets are nested: a branch never reappears at a farther LOD. Main limbs and roots remain. LOD2 also simplifies trunk and branch rings within a positional tolerance of 0.5% of tree height and a relaxed normal tolerance. It retains main limb attachment rings and intentional trunk bends; terminal twig sockets and small collar rings may collapse. Minimums are three sides and two segments. These are resolution factors, not triangle targets: protected rings and minimums limit reduction.
 
-**Broadleaf and needle cards:** select a deterministic, nested subset of the original cards in each cluster. Retain every cluster and distribute surviving card indices around its orientations. Copy the original normals, texture coordinates and gradient coordinates so surviving leaves do not change colors. Modest enlargement compensates for some lost coverage. Stem-attached bunches enlarge about the attachment pivot. Very sparse two-card clusters keep both cards. Compensation increases overdraw and can expand the outline slightly; reduce it for delicate silhouettes.
+**Broadleaf and needle cards:** keep foliage clusters at their original canopy sockets when interior supporting twigs shrink or disappear. This preserves crown coverage at a distance. In each cluster, rank cards by outward position and facing, with a small seeded tie-breaker; the hidden, inward-facing cards disappear first. Cards that remain at LOD1 but disappear at LOD2 contract toward their stem or card spine. LOD1 and LOD2 keep nested subsets. Copy the original normals, texture coordinates and gradient coordinates so surviving leaves do not change colors. Size compensation grows surviving cards toward the area lost to card reduction, with more growth at the canopy edge. Cards scale around their attachment pivot. At the default setting, a cluster reduced from eight to four cards grows its outer surviving cards by about 41%. Very sparse two-card clusters keep both cards. Compensation increases overdraw and can expand the outline slightly; reduce it for delicate silhouettes.
 
-**Palm:** retain every frond and its width profile, attachment, tip and middle row. Reduce the number of ribbon rows. Removing entire fronds would change the palm's recognizable outline too much.
+When **Align Foliage** is enabled, each row's one to three sides becomes the reduction group. LOD2 keeps both sides of a two-side row and at least two cards of a three-side row; a single-side row remains intact.
 
-Generic edge-collapse decimation is useful for solid meshes, but can destroy individual two-triangle leaf cards. This exporter can use its own procedural structure instead. It does not weld branch junctions, remove hidden interior branches, solve a view-dependent silhouette error, or create SpeedTree morph data.
+**Palm:** keep the original frond silhouette when interior supporting wood is pruned, then retain each frond's attachment, tip and middle row while reducing the number of ribbon rows. Exposed outer leaflets widen around the frond spine according to Leaf size compensation.
+
+Generic edge-collapse decimation is useful for solid meshes, but can destroy individual two-triangle leaf cards. This exporter uses its own procedural structure instead. The ranking is baked and view independent: it favors the outer canopy but does not measure occlusion from every camera angle or create SpeedTree morph data. Branch junctions remain overlapping rather than welded.
 
 ## Transitions and validation
 
@@ -39,7 +41,7 @@ Run **Tools > Terrainity > Validate Tree LODs** for representative Birch, Spruce
 
 ## Further improvements
 
-For very large forests, a baked multi-angle whole-tree impostor is a useful additional distant LOD. It requires a texture atlas, view selection, lighting/normals and shadow handling; a flat screenshot on a quad will not match well from all directions. It is not generated here. Wind is also not added by LOD generation.
+For very large forests, a baked multi-angle whole-tree impostor is a useful additional distant LOD. It requires a texture atlas, view selection, lighting/normals and shadow handling; a flat screenshot on a quad will not match well from all directions. It is not generated here. Wind weights and per-card phase are retained through LOD generation so the same Wind Zones move every mesh level.
 
 Foliage mipmaps and alpha coverage deserve separate treatment: distant alpha-tested leaves can disappear even when the geometry is retained. Test texture alpha coverage at the material cutoff. Normal-map/baked lighting consistency and shadow-distance tuning can matter as much as geometric detail.
 

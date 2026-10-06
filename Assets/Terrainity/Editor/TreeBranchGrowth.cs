@@ -20,14 +20,17 @@ namespace Terrainity.Editor
         internal sealed class Limb
         {
             internal Vector3[] points;
+            internal Vector3[] foliagePoints;
             internal float radius;
             internal int level;
             internal bool terminal;
+            internal bool pruned;
             internal bool isRoot;
             internal float parentRadius;
             internal Vector3 parentDirection;
             internal int parentIndex;
             internal float attachment;
+            internal Vector2 rootBendPeaks;
         }
 
         internal static List<Limb> Generate(TreeRecipe recipe, Vector3 trunkTip, float spreadScale, int variant)
@@ -63,7 +66,8 @@ namespace Terrainity.Editor
                 var radial = Quaternion.Euler(0, azimuth, 0) * Vector3.forward;
                 var direction = trunkFrame * (radial * Mathf.Sin(angle) + Vector3.up * Mathf.Cos(angle)).normalized;
                 float envelope = Mathf.Lerp(1, profile.crownTipScale, heightFraction);
-                float length = recipe.crownWidth * .5f * Mathf.Clamp(settings.spread, .1f, 2) * spreadScale * envelope;
+                float length = recipe.crownWidth * .5f * Mathf.Clamp(settings.spread, .1f, 2) * spreadScale
+                    * envelope * recipe.CrownTaperScale(heightFraction);
                 length *= 1 + Sample(rng, -.25f, .25f) * recipe.irregularity + Sample(sibling, -.6f, .6f) * variation;
                 float parentRadius = recipe.trunkRadius * (1 - Mathf.Clamp01(recipe.taper) * y);
                 float radius = Mathf.Min(parentRadius * Mathf.Clamp(settings.thickness, .1f, .9f), length * .16f);
