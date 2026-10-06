@@ -22,6 +22,8 @@ namespace Terrainity.Editor
                 Require(!ShaderUtil.ShaderHasError(Shader.Find("Hidden/Terrainity/Tint Preview")), "Preview shader compile");
                 CheckCoverage(shader);
                 Require(File.Exists("Assets/Terrainity/Shaders/TreeSurface.hlsl"), "Shader include exists (explicitly included in package export)");
+                Require(File.Exists("Assets/Terrainity/Shaders/TreeWind.hlsl")
+                    && File.Exists("Assets/Terrainity/Runtime/TreeWindController.cs"), "Wind runtime dependencies exist");
                 using (var preview = new TreePreview())
                 {
                     var lighting = new PreviewLightingSettings();
@@ -52,9 +54,26 @@ namespace Terrainity.Editor
                         Require(mesh.uv2.Any(v => v.y > .01f), "AO channel populated");
                     }
                     var foliage = preview.Meshes[1];
+                    var windWeights = new System.Collections.Generic.List<Vector4>();
+                    foliage.GetUVs(3, windWeights);
+                    Require(windWeights.Count == foliage.vertexCount && windWeights.Any(v => v.x > 0 && v.y > 0 && v.w > 0),
+                        "Foliage wind weights and card IDs");
                     var reduced = TreeLodGenerator.ReduceFoliage(foliage, recipe, 2, new TreeLodSettings());
-                    try { Require(reduced.uv2.Any(v => v.y > .01f), "LOD preserves AO"); }
+                    try
+                    {
+                        Require(reduced.uv2.Any(v => v.y > .01f), "LOD preserves AO");
+                        var reducedWind = new System.Collections.Generic.List<Vector4>();
+                        reduced.GetUVs(3, reducedWind);
+                        Require(reducedWind.Count == reduced.vertexCount && reducedWind.Any(v => v.w > 0),
+                            "LOD preserves wind weights and card IDs");
+                    }
                     finally { UnityEngine.Object.DestroyImmediate(reduced); }
+                    recipe.prunedFoliageCards.Add(0);
+                    preview.Build(recipe, 0);
+                    var prunedLod = TreeLodGenerator.ReduceFoliage(preview.Meshes[1], recipe, 2, new TreeLodSettings());
+                    try { Require(prunedLod.vertexCount > 0, "LOD supports pruned foliage groups"); }
+                    finally { UnityEngine.Object.DestroyImmediate(prunedLod); recipe.prunedFoliageCards.Clear(); }
+                    preview.Build(recipe, 0);
                     for (int i = 0; i < preview.Meshes.Count; i++)
                     {
                         var exported = new Material(shader);

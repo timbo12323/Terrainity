@@ -37,15 +37,7 @@ Shader "Hidden/Terrainity/Tint Preview"
             #pragma shader_feature_local_fragment _ENVIRONMENTREFLECTIONS_OFF
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
-            #include "Assets/Terrainity/Shaders/TreeTransmission.hlsl"
-            #include "Assets/Terrainity/Shaders/TreeSurface.hlsl"
-            TEXTURE2D(_BaseMap); SAMPLER(sampler_BaseMap);
-            TEXTURE2D(_TintRamp); SAMPLER(sampler_TintRamp);
-            CBUFFER_START(UnityPerMaterial)
-                float4 _BaseMap_ST;
-                half4 _BaseColor;
-                half _Cutoff, _AlphaClip, _Cull, _Smoothness, _Feathering, _OcclusionStrength, _Transmission, _CanopySoftness, _AlphaToMask;
-            CBUFFER_END
+            #include "../Shaders/TreeLighting.hlsl"
             struct Attributes { float4 positionOS:POSITION; float3 normalOS:NORMAL; float2 uv:TEXCOORD0; float2 tint:TEXCOORD1; float3 canopy:TEXCOORD2; };
             struct Varyings { float4 positionCS:SV_POSITION; float3 positionWS:TEXCOORD0; half3 normalWS:TEXCOORD1; float2 uv:TEXCOORD2; float2 tint:TEXCOORD3; half3 canopyWS:TEXCOORD4; };
             Varyings Vert(Attributes v)
@@ -65,22 +57,9 @@ Shader "Hidden/Terrainity/Tint Preview"
                 if (_AlphaClip > .5 && _AlphaToMask > .5 && _AlphaToMaskAvailable > .5)
                     coverage = TerrainityCoverage(tex.a, _Cutoff, _Feathering);
                 else TerrainityClip(tex.a, _Cutoff, _Feathering, _AlphaClip, i.positionCS.xy);
-                half3 tint = SAMPLE_TEXTURE2D(_TintRamp, sampler_TintRamp, float2(saturate(i.tint.x), 0.5)).rgb;
-                SurfaceData surface = (SurfaceData)0;
-                surface.albedo = tex.rgb * _BaseColor.rgb * tint;
-                surface.smoothness = _Smoothness; surface.occlusion = TerrainityOcclusion(i.tint.y, _OcclusionStrength); surface.alpha = 1;
-                surface.normalTS = half3(0,0,1);
-                InputData input = (InputData)0;
-                input.positionWS = i.positionWS; input.positionCS = i.positionCS;
-                input.normalWS = TerrainityCanopyNormal(normalize(i.normalWS) * IS_FRONT_VFACE(face, 1, -1), i.canopyWS, _CanopySoftness * _AlphaClip);
-                input.viewDirectionWS = GetWorldSpaceNormalizeViewDir(i.positionWS);
-                input.bakedGI = SampleSH(input.normalWS);
-                input.vertexLighting = VertexLighting(i.positionWS, input.normalWS);
-                input.shadowMask = half4(1,1,1,1);
-                input.normalizedScreenSpaceUV = GetNormalizedScreenSpaceUV(i.positionCS);
-                half4 color = UniversalFragmentPBR(input, surface);
-                color.rgb += TerrainityTransmission(input, surface.albedo, _Transmission * _AlphaClip);
-                color.a = coverage;
+                tex.a = coverage;
+                half4 color = TerrainityLitColor(tex, i.tint, i.positionWS, i.positionCS,
+                    i.normalWS, i.canopyWS, IS_FRONT_VFACE(face, 1, -1), half3(1,1,1), false);
                 return color;
             }
             ENDHLSL

@@ -23,6 +23,38 @@ namespace Terrainity.Editor
                     var recipe = TreeJsonStorage.ReadFamily("Assets/Terrainity/Families/" + family + ".json").defaults.Restore(out _);
                     recipe.variantCount = 2;
                     recipe.assetName = "LOD Validation " + family;
+                    var branches = TreeBranchGrowth.Generate(recipe,
+                        new Vector3(recipe.lean * recipe.height * .18f, recipe.height, 0), 1, 0);
+                    var nearScales = TreeLodGenerator.BranchScaleFactors(branches, recipe, 1);
+                    var farScales = TreeLodGenerator.BranchScaleFactors(branches, recipe, 2);
+                    Require(nearScales.SequenceEqual(TreeLodGenerator.BranchScaleFactors(branches, recipe, 1)),
+                        family + " branch pruning is not deterministic");
+                    for (int i = 0; i < branches.Count; i++)
+                    {
+                        Require(farScales[i] <= nearScales[i], family + " far LOD restored a pruned branch");
+                        if (branches[i].parentIndex < 0) Require(nearScales[i] == 1 && farScales[i] == 1,
+                            family + " pruned a main limb");
+                    }
+                    if (branches.Count(l => l.terminal && l.parentIndex >= 0) >= 4)
+                        Require(nearScales.Any(scale => scale < 1) && farScales.Any(scale => scale == 0),
+                            family + " did not shrink and cull interior branches");
+                    using (var fullCanopy = new TreePreview())
+                    using (var prunedCanopy = new TreePreview())
+                    {
+                        fullCanopy.Build(recipe, 0);
+                        prunedCanopy.Build(recipe, 0, 2);
+                        if (fullCanopy.Meshes.Count > 1)
+                        {
+                            Require(prunedCanopy.Meshes.Count > 1
+                                && prunedCanopy.Meshes[1].vertexCount == fullCanopy.Meshes[1].vertexCount,
+                                family + " pruning removed foliage clusters");
+                            var fullFoliageBounds = fullCanopy.Meshes[1].bounds;
+                            var prunedFoliageBounds = prunedCanopy.Meshes[1].bounds;
+                            Require(Vector3.Distance(fullFoliageBounds.center, prunedFoliageBounds.center) < .001f
+                                && Vector3.Distance(fullFoliageBounds.size, prunedFoliageBounds.size) < .001f,
+                                family + " pruning contracted the foliage silhouette");
+                        }
+                    }
                     TreeExporter.Result export = null;
                     try
                     {
@@ -30,6 +62,7 @@ namespace Terrainity.Editor
                         var prefab = export.prefabs[0]; var group = prefab.GetComponent<LODGroup>(); var lods = group.GetLODs();
                         Require(lods.Length == 3 && group.fadeMode == LODFadeMode.CrossFade, "LODGroup setup failed");
                         int previous = int.MaxValue;
+                        int previousWood = int.MaxValue;
                         var full = lods[0].renderers[0].GetComponent<MeshFilter>().sharedMesh;
                         for (int level = 0; level < 3; level++)
                         {
@@ -37,12 +70,30 @@ namespace Terrainity.Editor
                             var mesh = renderer.GetComponent<MeshFilter>().sharedMesh;
                             int triangles = mesh.triangles.Length / 3;
                             Require(triangles < previous, family + " LOD failed to reduce triangles"); previous = triangles;
+                            int woodTriangles = (int)mesh.GetIndexCount(0) / 3;
+                            Require(woodTriangles < previousWood, family + " LOD failed to reduce wood triangles");
+                            previousWood = woodTriangles;
                             Require(mesh.subMeshCount == 2 && mesh.uv2.Length == mesh.vertexCount, "Missing material or tint coordinates");
+                            var wind = new System.Collections.Generic.List<Vector4>();
+                            mesh.GetUVs(3, wind);
+                            Require(wind.Count == mesh.vertexCount && wind.Any(v => v.w > 0), "Missing LOD wind coordinates");
                             Require(renderer.sharedMaterials.SequenceEqual(lods[0].renderers[0].sharedMaterials), "LOD duplicated materials");
                             Require(mesh.triangles.All(i => i >= 0 && i < mesh.vertexCount), "Invalid mesh index");
                             Require(mesh.vertices.All(v => float.IsFinite(v.x) && float.IsFinite(v.y) && float.IsFinite(v.z)), "Non-finite vertices");
                             Require(Vector3.Distance(mesh.bounds.center, full.bounds.center) < full.bounds.size.magnitude * .15f, "Tree center drift");
-                            report.AppendLine($"{family} LOD{level}: {triangles:N0} triangles ({100f * triangles / (full.triangles.Length / 3):F1}%)");
+                            if (level > 0)
+                                using (var lodPreview = new TreePreview())
+                                {
+                                    lodPreview.AllowFarZoom(true);
+                                    lodPreview.SetView(new Vector3(35, 10, 32), Vector3.zero);
+                                    lodPreview.BuildLod(recipe, 0, level, settings);
+                                    var previewMesh = lodPreview.Meshes[0];
+                                    Require(lodPreview.ViewOrbit.z == 32 && previewMesh.vertexCount == mesh.vertexCount
+                                        && previewMesh.subMeshCount == mesh.subMeshCount
+                                        && Enumerable.Range(0, mesh.subMeshCount).All(i => previewMesh.GetIndexCount(i) == mesh.GetIndexCount(i)),
+                                        family + " LOD preview differs from export");
+                                }
+                            report.AppendLine($"{family} LOD{level}: {triangles:N0} triangles ({100f * triangles / (full.triangles.Length / 3):F1}%), wood {woodTriangles:N0}");
                             Snapshot(mesh, renderer.sharedMaterials, full.bounds, family + "-LOD" + level, 35);
                             Snapshot(mesh, renderer.sharedMaterials, full.bounds, family + "-side-LOD" + level, 125);
                             foreach (var material in renderer.sharedMaterials)
@@ -60,7 +111,7 @@ namespace Terrainity.Editor
                     finally { if (export != null) AssetDatabase.DeleteAsset(export.folder); }
                 }
                 Require(!ShaderUtil.ShaderHasError(Shader.Find("Terrainity/Tree")), "LOD shader compilation failed");
-                report.AppendLine("PASS: LOD assignment, monotonic reduction, valid geometry, shared materials, stable bounds, serialized settings, shader passes and package export.");
+                report.AppendLine("PASS: deterministic nested branch pruning, preserved foliage sockets, LOD assignment, preview/export mesh parity, far zoom, monotonic reduction, valid geometry, shared materials, stable bounds, serialized settings, shader passes and package export.");
             }
             catch (Exception e) { report.AppendLine(e.ToString()); Debug.LogException(e); }
             finally

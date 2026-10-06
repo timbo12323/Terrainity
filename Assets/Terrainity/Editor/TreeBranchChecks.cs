@@ -105,17 +105,20 @@ namespace Terrainity.Editor
         [MenuItem("Tools/Terrainity/Validate JSON Recipes")]
         static void ValidateJsonRecipes()
         {
-            TreeJsonStorage.ReloadFamilies();
+            TreeJsonStorage.ReloadFamilies(true);
             Require(TreeJsonStorage.Families.Count >= 4, "Missing built-in families");
             foreach (string species in new[] { "Pine", "Oak", "Birch", "Maple" })
             {
-                var original = new TreeRecipe { species = species, foliageGradientEnabled = true, barkGradientEnabled = true };
+                var original = new TreeRecipe { species = species, foliageGradientEnabled = true, barkGradientEnabled = true, crownTaper = .6f };
+                original.prunedFoliageCards.Add(17);
                 original.Branches.subBranches = 3;
                 var document = TreeRecipeJson.From(original, 2);
                 var json = JsonUtility.ToJson(document);
                 var loaded = JsonUtility.FromJson<TreeRecipeJson>(json).Restore(out var warning);
                 Require(warning == "", "Unexpected missing texture");
                 Require(loaded.Branches.subBranches == 3 && loaded.species == species, "Lost recipe settings");
+                Require(Mathf.Abs(loaded.crownTaper - original.crownTaper) < .00001f, "Lost crown taper");
+                Require(loaded.prunedFoliageCards.Count == 1 && loaded.prunedFoliageCards[0] == 17, "Lost pruned foliage cards");
                 Require(loaded.foliageGradient.colorKeys.Length == original.foliageGradient.colorKeys.Length, "Lost gradient stops");
                 Require(loaded.foliageGradient.Evaluate(.4f) == original.foliageGradient.Evaluate(.4f), "Changed gradient");
                 var a = TreeBranchGrowth.Generate(original, Vector3.up * original.height, 1, 0);
@@ -217,7 +220,8 @@ namespace Terrainity.Editor
                     {
                         var uv = preview.Meshes[1].uv2;
                         for (int i = 0; i < uv.Length; i += 4)
-                            Require(uv[i] == uv[i + 1] && uv[i] == uv[i + 2] && uv[i] == uv[i + 3], "Card tint is not uniform");
+                            // Tint is x; y is per-vertex ambient occlusion and may vary across a card.
+                            Require(uv[i].x == uv[i + 1].x && uv[i].x == uv[i + 2].x && uv[i].x == uv[i + 3].x, "Card tint is not uniform");
                     }
                 }
             }
@@ -280,6 +284,15 @@ namespace Terrainity.Editor
                 var wide = TreeBranchGrowth.Generate(recipe, tip, 1, 0);
                 Require(Mathf.Abs(Vector3.Distance(wide[0].points[0], wide[0].points[TreeBranchGrowth.Segments]) /
                     Vector3.Distance(narrow[0].points[0], narrow[0].points[TreeBranchGrowth.Segments]) - 2) < .0001f, "Spread does not scale reach");
+                recipe.crownTaper = 1;
+                var tapered = TreeBranchGrowth.Generate(recipe, tip, 1, 0);
+                float lowerReach = Vector3.Distance(tapered[0].points[0], tapered[0].points[TreeBranchGrowth.Segments])
+                    / Vector3.Distance(wide[0].points[0], wide[0].points[TreeBranchGrowth.Segments]);
+                int upper = tapered.Count - 1;
+                float upperReach = Vector3.Distance(tapered[upper].points[0], tapered[upper].points[TreeBranchGrowth.Segments])
+                    / Vector3.Distance(wide[upper].points[0], wide[upper].points[TreeBranchGrowth.Segments]);
+                Require(lowerReach > upperReach && upperReach < .5f, "Crown taper did not narrow upper limbs progressively");
+                recipe.crownTaper = 0;
                 checks += 5;
                 recipe.irregularity = 0;
                 settings.depth = 0;

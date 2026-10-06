@@ -65,12 +65,14 @@ Shader "Terrainity/Rock Triplanar"
                 half3 normalOS : TEXCOORD1;
                 float3 positionWS : TEXCOORD2;
                 DECLARE_LIGHTMAP_OR_SH(lightmapUV, vertexSH, 3);
+                UNITY_VERTEX_INPUT_INSTANCE_ID
                 UNITY_VERTEX_OUTPUT_STEREO
             };
             Varyings Vert(Attributes v)
             {
                 Varyings o = (Varyings)0;
                 UNITY_SETUP_INSTANCE_ID(v);
+                UNITY_TRANSFER_INSTANCE_ID(v, o);
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
                 VertexPositionInputs position = GetVertexPositionInputs(v.positionOS.xyz);
                 o.positionCS = position.positionCS;
@@ -83,6 +85,8 @@ Shader "Terrainity/Rock Triplanar"
             }
             half4 Frag(Varyings i) : SV_Target
             {
+                // Fragment normal transforms need the same instance transform as the vertices.
+                UNITY_SETUP_INSTANCE_ID(i);
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
                 #if defined(LOD_FADE_CROSSFADE)
                 LODFadeCrossFade(i.positionCS);

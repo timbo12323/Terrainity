@@ -9,6 +9,7 @@ using UnityEngine.Rendering;
 
 namespace Terrainity.Editor
 {
+    // Match resource contents across exports; track only this transaction's new assets for rollback.
     internal sealed class TreeSharedResources
     {
         internal const string Root = "Assets/TerrainityGenerated/Shared";
@@ -34,31 +35,47 @@ namespace Terrainity.Editor
 
         internal Texture2D Texture(Texture2D candidate, string label)
         {
-            string key = TextureKey(candidate);
-            if (textures.TryGetValue(key, out var existing))
+            try
             {
-                UnityEngine.Object.DestroyImmediate(candidate);
-                return existing;
+                string key = TextureKey(candidate);
+                if (textures.TryGetValue(key, out var existing))
+                {
+                    UnityEngine.Object.DestroyImmediate(candidate);
+                    return existing;
+                }
+                candidate.name = label;
+                candidate.hideFlags = HideFlags.None;
+                Save(candidate, Root + "/Textures/" + TreeExporter.SafeName(label) + "_" + key + ".asset");
+                textures[key] = candidate;
+                return candidate;
             }
-            candidate.name = label;
-            candidate.hideFlags = HideFlags.None;
-            Save(candidate, Root + "/Textures/" + TreeExporter.SafeName(label) + "_" + key + ".asset");
-            textures[key] = candidate;
-            return candidate;
+            catch
+            {
+                if (candidate != null && !EditorUtility.IsPersistent(candidate)) UnityEngine.Object.DestroyImmediate(candidate);
+                throw;
+            }
         }
 
         internal Material Material(Material candidate, string label)
         {
-            string key = MaterialKey(candidate);
-            if (materials.TryGetValue(key, out var existing))
+            try
             {
-                UnityEngine.Object.DestroyImmediate(candidate);
-                return existing;
+                string key = MaterialKey(candidate);
+                if (materials.TryGetValue(key, out var existing))
+                {
+                    UnityEngine.Object.DestroyImmediate(candidate);
+                    return existing;
+                }
+                candidate.name = label;
+                Save(candidate, Root + "/Materials/" + TreeExporter.SafeName(label) + "_" + key + ".mat");
+                materials[key] = candidate;
+                return candidate;
             }
-            candidate.name = label;
-            Save(candidate, Root + "/Materials/" + TreeExporter.SafeName(label) + "_" + key + ".mat");
-            materials[key] = candidate;
-            return candidate;
+            catch
+            {
+                if (candidate != null && !EditorUtility.IsPersistent(candidate)) UnityEngine.Object.DestroyImmediate(candidate);
+                throw;
+            }
         }
 
         void Save(UnityEngine.Object asset, string suggested)
@@ -85,7 +102,9 @@ namespace Terrainity.Editor
             using (var sha = SHA256.Create())
             {
                 write(writer); writer.Flush();
-                return BitConverter.ToString(sha.ComputeHash(stream.ToArray())).Replace("-", "").ToLowerInvariant();
+                // Hash the backing stream directly; textures can make this buffer several MB.
+                stream.Position = 0;
+                return BitConverter.ToString(sha.ComputeHash(stream)).Replace("-", "").ToLowerInvariant();
             }
         }
 

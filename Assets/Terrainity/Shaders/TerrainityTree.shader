@@ -26,24 +26,17 @@ Shader "Terrainity/Tree"
         HLSLINCLUDE
         #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
         #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
-            #include "Assets/Terrainity/Shaders/TreeTransmission.hlsl"
-            #include "Assets/Terrainity/Shaders/TreeSurface.hlsl"
+        #include "TreeLighting.hlsl"
+        #include "TreeWind.hlsl"
         #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/LODCrossFade.hlsl"
         #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Packing.hlsl"
-        TEXTURE2D(_BaseMap); SAMPLER(sampler_BaseMap);
-        TEXTURE2D(_TintRamp); SAMPLER(sampler_TintRamp);
-        CBUFFER_START(UnityPerMaterial)
-            float4 _BaseMap_ST;
-            half4 _BaseColor;
-            half _Cutoff, _AlphaClip, _Cull, _Smoothness, _Feathering, _OcclusionStrength, _Transmission, _CanopySoftness, _AlphaToMask;
-        CBUFFER_END
         UNITY_INSTANCING_BUFFER_START(TreeInstances)
             UNITY_DEFINE_INSTANCED_PROP(float4, _TreeInstanceColor)
         UNITY_INSTANCING_BUFFER_END(TreeInstances)
         struct Attributes
         {
             float4 positionOS:POSITION; float3 normalOS:NORMAL;
-            float2 uv:TEXCOORD0; float2 tint:TEXCOORD1; float3 canopy:TEXCOORD2;
+            float2 uv:TEXCOORD0; float2 tint:TEXCOORD1; float3 canopy:TEXCOORD2; float4 wind:TEXCOORD3;
             UNITY_VERTEX_INPUT_INSTANCE_ID
         };
         struct Varyings
@@ -57,7 +50,9 @@ Shader "Terrainity/Tree"
         {
             Varyings o = (Varyings)0;
             UNITY_SETUP_INSTANCE_ID(v); UNITY_TRANSFER_INSTANCE_ID(v,o); UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
-            VertexPositionInputs p = GetVertexPositionInputs(v.positionOS.xyz);
+            float3 worldPosition = TransformObjectToWorld(v.positionOS.xyz);
+            float3 deformedPosition = TransformWorldToObject(worldPosition + TerrainityWindOffset(worldPosition, v.wind));
+            VertexPositionInputs p = GetVertexPositionInputs(deformedPosition);
             o.positionCS = p.positionCS; o.positionWS = p.positionWS;
             o.normalWS = TransformObjectToWorldNormal(v.normalOS);
             o.canopyWS = dot(v.canopy, v.canopy) > .00001 ? TransformObjectToWorldNormal(v.canopy) : float3(0,0,0);
@@ -102,23 +97,10 @@ Shader "Terrainity/Tree"
             {
                 UNITY_SETUP_INSTANCE_ID(i); UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
                 half4 tex = SampleTree(i, true);
-                half3 tint = SAMPLE_TEXTURE2D(_TintRamp, sampler_TintRamp, float2(saturate(i.tint.x), .5)).rgb;
-                SurfaceData surface = (SurfaceData)0;
-                surface.albedo = tex.rgb * _BaseColor.rgb * tint * UNITY_ACCESS_INSTANCED_PROP(TreeInstances, _TreeInstanceColor).rgb;
-                surface.smoothness = _Smoothness; surface.occlusion = TerrainityOcclusion(i.tint.y, _OcclusionStrength); surface.alpha = 1; surface.normalTS = half3(0,0,1);
-                InputData input = (InputData)0;
-                input.positionWS = i.positionWS; input.positionCS = i.positionCS;
-                input.normalWS = TerrainityCanopyNormal(normalize(i.normalWS) * IS_FRONT_VFACE(face, 1, -1), i.canopyWS, _CanopySoftness * _AlphaClip);
-                input.viewDirectionWS = GetWorldSpaceNormalizeViewDir(i.positionWS);
-                input.bakedGI = SampleSH(input.normalWS);
-                input.shadowCoord = TransformWorldToShadowCoord(i.positionWS);
-                input.shadowMask = half4(1,1,1,1);
-                input.vertexLighting = VertexLighting(i.positionWS, input.normalWS);
-                input.normalizedScreenSpaceUV = GetNormalizedScreenSpaceUV(i.positionCS);
-                half4 color = UniversalFragmentPBR(input, surface);
-                color.rgb += TerrainityTransmission(input, surface.albedo, _Transmission * _AlphaClip);
+                half4 color = TerrainityLitColor(tex, i.tint, i.positionWS, i.positionCS,
+                    i.normalWS, i.canopyWS, IS_FRONT_VFACE(face, 1, -1),
+                    UNITY_ACCESS_INSTANCED_PROP(TreeInstances, _TreeInstanceColor).rgb, true);
                 color.rgb = MixFog(color.rgb, ComputeFogFactor(TransformWorldToHClip(i.positionWS).z));
-                color.a = tex.a;
                 return color;
             }
             ENDHLSL
@@ -199,6 +181,7 @@ Shader "Terrainity/Tree"
         Cull [_Cull]
         CGPROGRAM
         #include "Assets/Terrainity/Shaders/TreeSurface.hlsl"
+        #include "Assets/Terrainity/Shaders/TreeWind.hlsl"
         #pragma surface Surf TerrainityLeaf fullforwardshadows addshadow vertex:Vert
         #pragma target 3.5
         #pragma multi_compile_instancing
@@ -225,7 +208,15 @@ Shader "Terrainity/Tree"
             LightingStandard_GI(s, data, gi);
         }
         struct Input { float2 uv_BaseMap; float2 tint; float facing:VFACE; float4 screenPos;  };
-        void Vert(inout appdata_full v, out Input o) { UNITY_INITIALIZE_OUTPUT(Input,o); o.tint = v.texcoord1.xy; float3 blended = lerp(v.normal, v.texcoord2.xyz, _CanopySoftness * _AlphaClip); if (dot(blended, blended) > .00001) v.normal = normalize(blended); }
+        void Vert(inout appdata_full v, out Input o)
+        {
+            UNITY_INITIALIZE_OUTPUT(Input,o);
+            o.tint = v.texcoord1.xy;
+            float3 worldPosition = mul(unity_ObjectToWorld, v.vertex).xyz;
+            v.vertex = mul(unity_WorldToObject, float4(worldPosition + TerrainityWindOffset(worldPosition, v.texcoord3), 1));
+            float3 blended = lerp(v.normal, v.texcoord2.xyz, _CanopySoftness * _AlphaClip);
+            if (dot(blended, blended) > .00001) v.normal = normalize(blended);
+        }
         void Surf(Input i, inout SurfaceOutputStandard o)
         {
             #if defined(LOD_FADE_CROSSFADE)

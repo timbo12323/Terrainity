@@ -45,9 +45,10 @@ namespace Terrainity.Editor
                     float t = j / (float)(points.Length - 1), u = 1 - t;
                     points[j] = u * u * u * p0 + 3 * u * u * t * p1 + 3 * u * t * t * p2 + t * t * t * end;
                 }
-                Bend(recipe, points, unchecked(recipe.seed ^ sibling * 7919 ^ i * 104729));
+                var bendPeaks = Bend(recipe, points, unchecked(recipe.seed ^ sibling * 7919 ^ i * 104729));
                 roots.Add(new TreeBranchGrowth.Limb {
                     points = points, radius = radius, parentRadius = parentRadius,
+                    rootBendPeaks = bendPeaks,
                     parentDirection = downward, parentIndex = -1, attachment = attachment,
                     level = 1, terminal = false, isRoot = true
                 });
@@ -82,10 +83,12 @@ namespace Terrainity.Editor
                     points[j] = u * u * u * start + 3 * u * u * s * control1 + 3 * u * s * s * control2 + s * s * s * end;
                 }
                 float socketRadius = TreeBranchGrowth.RadiusAt(parent.radius, t, recipe.rootTaper);
+                // Preserve random draws even when this root has no forks, keeping later sockets stable.
                 if (depths[parentIndex] == 0) continue;
-                Bend(recipe, points, unchecked(recipe.seed ^ sibling * 7919 ^ (i + count) * 104729));
+                var bendPeaks = Bend(recipe, points, unchecked(recipe.seed ^ sibling * 7919 ^ (i + count) * 104729));
                 roots.Add(new TreeBranchGrowth.Limb {
                     points = points, radius = socketRadius * .6f, parentRadius = socketRadius,
+                    rootBendPeaks = bendPeaks,
                     parentDirection = tangent, parentIndex = parentOffset + parentIndex, attachment = t,
                     level = 2, terminal = false, isRoot = true
                 });
@@ -97,21 +100,46 @@ namespace Terrainity.Editor
             return roots;
         }
 
-        static void Bend(TreeRecipe recipe, Vector3[] points, int seed)
+        static Vector2 Bend(TreeRecipe recipe, Vector3[] points, int seed)
         {
             float amount = Mathf.Clamp01(recipe.rootBend);
-            if (amount == 0) return;
+            if (amount == 0) return Vector2.zero;
             Vector3 side = Vector3.Cross(Vector3.up, points[points.Length - 1] - points[0]).normalized;
-            float sign = new System.Random(seed).Next(2) == 0 ? -1 : 1;
-            float amplitude = Vector3.Distance(points[0], points[points.Length - 1]) * amount * .3f * sign;
+            if (side.sqrMagnitude < .000001f) side = Vector3.right;
+            // Mix related root seeds before sampling so neighboring roots do not follow a pattern.
+            uint hash = unchecked((uint)seed);
+            unchecked
+            {
+                hash ^= hash >> 16; hash *= 0x7feb352du;
+                hash ^= hash >> 15; hash *= 0x846ca68bu;
+                hash ^= hash >> 16;
+            }
+            var random = new System.Random((int)(hash & int.MaxValue));
+            float Next(float min, float max) => Mathf.Lerp(min, max, (float)random.NextDouble());
+            float sign = random.Next(2) == 0 ? -1 : 1;
+            float amplitude = Vector3.Distance(points[0], points[points.Length - 1]) * amount * .3f;
+            float strength = Next(.4f, 1) * sign;
+            float peak = Next(.3f, .78f);
+            float secondaryStrength = Next(-.45f, .45f);
+            float secondaryPeak = Next(.25f, .85f);
+            float sharpness = Mathf.Clamp01(recipe.rootSharpness);
             for (int i = 1; i < points.Length - 1; i++)
             {
                 float t = i / (float)(points.Length - 1);
-                float smooth = Mathf.Pow(Mathf.Sin(t * Mathf.PI), 2);
-                float elbow = 1 - Mathf.Abs(t * 2 - 1);
                 float socketFade = Mathf.SmoothStep(0, 1, t / .25f);
-                points[i] += side * (amplitude * Mathf.Lerp(smooth, elbow, Mathf.Clamp01(recipe.rootSharpness)) * socketFade);
+                float offset = strength * BendEnvelope(t, peak, sharpness)
+                    + secondaryStrength * BendEnvelope(t, secondaryPeak, sharpness);
+                // Horizontal variation preserves burial depth; endpoints and the socket fade stay fixed.
+                points[i] += side * (amplitude * offset * socketFade);
             }
+            return new Vector2(peak, secondaryPeak);
+        }
+
+        static float BendEnvelope(float t, float peak, float sharpness)
+        {
+            float along = t <= peak ? t / peak : (1 - t) / (1 - peak);
+            float smooth = Mathf.Pow(Mathf.Sin(along * Mathf.PI * .5f), 2);
+            return Mathf.Lerp(smooth, along, sharpness);
         }
 
         static void GrowForks(TreeRecipe recipe, List<TreeBranchGrowth.Limb> roots, int parentIndex, int parentOffset, int remaining, System.Random rng)
@@ -136,11 +164,12 @@ namespace Terrainity.Editor
                     points[j] = u * u * u * start + 3 * u * u * s * (start + tangent * length * .3f)
                         + 3 * u * s * s * Vector3.Lerp(start, end, .7f) + s * s * s * end;
                 }
-                Bend(recipe, points, rng.Next());
+                var bendPeaks = Bend(recipe, points, rng.Next());
                 float radius = TreeBranchGrowth.RadiusAt(parent.radius, t, recipe.rootTaper);
                 int index = roots.Count;
                 roots.Add(new TreeBranchGrowth.Limb {
                     points = points, radius = radius * .6f, parentRadius = radius, parentDirection = tangent,
+                    rootBendPeaks = bendPeaks,
                     parentIndex = parentIndex + parentOffset, attachment = t, level = parent.level + 1,
                     terminal = false, isRoot = true
                 });

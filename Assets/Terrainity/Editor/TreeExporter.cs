@@ -67,24 +67,32 @@ namespace Terrainity.Editor
                             {
                                 string label = i == 0 ? "Bark" : "Foliage";
                                 material = new Material(shader) { name = stem + " " + label };
-                                material.CopyPropertiesFromMaterial(builder.MaterialForMesh(i));
-                                material.hideFlags = HideFlags.None;
-                                material.enableInstancing = true;
-                                material.SetColor("_TreeInstanceColor", Color.white);
-                                foreach (string property in new[] { "_BaseMap", "_TintRamp" })
+                                var candidate = material;
+                                try
                                 {
-                                    var original = material.GetTexture(property);
-                                    if (original == null) continue;
-                                    if (!savedTextures.TryGetValue(original, out var texture))
+                                    material.CopyPropertiesFromMaterial(builder.MaterialForMesh(i));
+                                    material.hideFlags = HideFlags.None;
+                                    material.enableInstancing = true;
+                                    material.SetColor("_TreeInstanceColor", Color.white);
+                                    foreach (string property in new[] { "_BaseMap", "_TintRamp" })
                                     {
-                                        texture = CopyTexture(original);
-                                        texture = shared.Texture((Texture2D)texture, label + (property == "_BaseMap" ? " Texture" : " Tint"));
-                                        savedTextures.Add(original, texture);
+                                        var original = material.GetTexture(property);
+                                        if (original == null) continue;
+                                        if (!savedTextures.TryGetValue(original, out var texture))
+                                        {
+                                            texture = CopyTexture(original);
+                                            texture = shared.Texture((Texture2D)texture, label + (property == "_BaseMap" ? " Texture" : " Tint"));
+                                            savedTextures.Add(original, texture);
+                                        }
+                                        material.SetTexture(property, texture);
                                     }
-                                    material.SetTexture(property, texture);
+                                    material = shared.Material(material, label);
+                                    savedMaterials.Add(i, material);
                                 }
-                                material = shared.Material(material, label);
-                                savedMaterials.Add(i, material);
+                                finally
+                                {
+                                    if (candidate != null && !EditorUtility.IsPersistent(candidate)) UnityEngine.Object.DestroyImmediate(candidate);
+                                }
                             }
                             materials[i] = material;
                         }
@@ -92,19 +100,19 @@ namespace Terrainity.Editor
                         var mesh = new Mesh { name = name, indexFormat = IndexFormat.UInt32 };
                         mesh.CombineMeshes(parts, false, false);
                         mesh.RecalculateBounds();
-                        AssetDatabase.CreateAsset(mesh, folder + "/Models/" + name + ".asset");
+                        mesh.bounds = WindBounds(mesh.bounds, recipe.height);
+                        SaveGeneratedAsset(mesh, folder + "/Models/" + name + ".asset");
                         var lodMeshes = new List<Mesh> { mesh };
                         if (lodSettings.enabled)
                             for (int level = 1; level <= 2; level++)
                             {
-                                var reduced = TreeLodGenerator.Build(recipe, sibling, level,
-                                    builder.Meshes.Count > 1 ? builder.Meshes[1] : null, lodSettings);
+                                var reduced = TreeLodGenerator.Build(recipe, sibling, level, lodSettings);
                                 reduced.name = name + "_LOD" + level;
-                                AssetDatabase.CreateAsset(reduced, folder + "/Models/" + reduced.name + ".asset");
+                                SaveGeneratedAsset(reduced, folder + "/Models/" + reduced.name + ".asset");
                                 lodMeshes.Add(reduced);
                             }
                         for (int level = 0; level < lodMeshes.Count; level++)
-                            lodReport.AppendLine($"{name},{level},{lodMeshes[level].triangles.Length / 3}");
+                            lodReport.AppendLine($"{name},{level},{TerrainityMeshUtility.TriangleCount(lodMeshes[level])}");
 
                         // Preview scene keeps temporary export objects out of the user's scene and Undo history.
                         var scene = UnityEditor.SceneManagement.EditorSceneManager.NewPreviewScene();
@@ -161,8 +169,8 @@ namespace Terrainity.Editor
                 // Recipe references exported textures, so it also works when the package is moved.
                 SetRecipeTexture(document, savedMaterials[0].GetTexture("_BaseMap"), false);
                 if (savedMaterials.TryGetValue(1, out var leaves)) SetRecipeTexture(document, leaves.GetTexture("_BaseMap"), true);
-                TreeJsonStorage.Write(folder + "/Recipes/Recipe.json", document);
-                TreeJsonStorage.Write(folder + "/Recipes/LODSettings.json", lodSettings);
+                TreeJsonStorage.Write(folder + "/Recipes/Recipe.json", document, false);
+                TreeJsonStorage.Write(folder + "/Recipes/LODSettings.json", lodSettings, false);
                 File.WriteAllText(folder + "/LOD-Report.csv", lodReport.ToString());
                 File.WriteAllText(folder + "/README.txt",
                     "Terrainity tree family\n\nSelect Terrain > Paint Trees > Edit Trees > Add Tree and choose a prefab from Prefabs.\n" +
@@ -170,7 +178,7 @@ namespace Terrainity.Editor
                     "Meshes and the recipe are local to this family. Materials and textures are reused from Assets/TerrainityGenerated/Shared when their contents match.\n" +
                     "Editing a shared resource affects every tree using it. Use Export Unity package to include all referenced shared resources and the Terrainity/Tree shader.\n" +
                     (lodSettings.enabled ? "Each prefab has three mesh LODs assigned automatically. See LOD-Report.csv for actual triangle counts.\n" : "Each prefab uses one mesh LOD.\n") +
-                    "No distant whole-tree billboard or Wind Zone animation is generated. Cross-fading in URP requires LOD Cross Fade enabled in the pipeline asset.\n" +
+                    "Terrainity/Tree responds to active Wind Zones at runtime through TreeWindController. No distant whole-tree billboard is generated. Cross-fading in URP requires LOD Cross Fade enabled in the pipeline asset.\n" +
                     "Foliage consists of fixed cards or curved palm fronds. Reduce builder Mesh detail and branch density for large forests.\n" +
                     (collider ? "The optional capsule approximates the lower trunk; review it for strongly bent trunks.\n" : "No physics collider was requested.\n"));
                 AssetDatabase.SaveAssets();
@@ -203,12 +211,13 @@ namespace Terrainity.Editor
                 srgb ? RenderTextureReadWrite.sRGB : RenderTextureReadWrite.Linear);
             var previous = RenderTexture.active;
             bool previousWrite = GL.sRGBWrite;
+            Texture2D copy = null;
             try
             {
                 GL.sRGBWrite = srgb && QualitySettings.activeColorSpace == ColorSpace.Linear;
                 Graphics.Blit(source, target);
                 RenderTexture.active = target;
-                var copy = new Texture2D(source.width, source.height, TextureFormat.RGBA32, source.mipmapCount > 1, !srgb);
+                copy = new Texture2D(source.width, source.height, TextureFormat.RGBA32, source.mipmapCount > 1, !srgb);
                 copy.ReadPixels(new Rect(0, 0, source.width, source.height), 0, 0);
                 copy.Apply(true, false);
                 copy.wrapModeU = source.wrapModeU; copy.wrapModeV = source.wrapModeV;
@@ -216,6 +225,7 @@ namespace Terrainity.Editor
                 copy.filterMode = source.filterMode; copy.anisoLevel = source.anisoLevel;
                 return copy;
             }
+            catch { if (copy != null) UnityEngine.Object.DestroyImmediate(copy); throw; }
             finally { GL.sRGBWrite = previousWrite; RenderTexture.active = previous; RenderTexture.ReleaseTemporary(target); }
         }
 
@@ -230,8 +240,9 @@ namespace Terrainity.Editor
             var data = terrain.terrainData;
             var prototypes = new List<TreePrototype>(data.treePrototypes);
             int before = prototypes.Count;
+            var registered = new HashSet<GameObject>(prototypes.Select(p => p.prefab));
             foreach (var prefab in incoming)
-                if (!prototypes.Any(p => p.prefab == prefab)) prototypes.Add(new TreePrototype { prefab = prefab, bendFactor = 0 });
+                if (registered.Add(prefab)) prototypes.Add(new TreePrototype { prefab = prefab, bendFactor = 0 });
             if (prototypes.Count == before) return 0;
             Undo.RegisterCompleteObjectUndo(data, "Add Terrainity tree family");
             data.treePrototypes = prototypes.ToArray();
@@ -243,12 +254,15 @@ namespace Terrainity.Editor
 
         internal static void ExportPackage(string folder, string destination)
         {
-            if (string.IsNullOrEmpty(folder) || !folder.StartsWith(OutputRoot + "/", StringComparison.Ordinal) || !AssetDatabase.IsValidFolder(folder))
+            if (!IsFamilyFolderPath(folder) || !AssetDatabase.IsValidFolder(folder))
                 throw new InvalidOperationException("Generate a family first.");
             // Include runtime assets explicitly; never embed read-only UPM shader includes.
             var paths = AssetDatabase.FindAssets("", new[] { folder }).Select(AssetDatabase.GUIDToAssetPath).ToArray();
             paths = AssetDatabase.GetDependencies(paths, true).Concat(paths)
-                .Concat(new[] { "Assets/Terrainity/Shaders/TreeSurface.hlsl", "Assets/Terrainity/Shaders/TreeTransmission.hlsl" })
+                .Concat(folder.StartsWith(OutputRoot + "/", StringComparison.Ordinal)
+                    ? new[] { "Assets/Terrainity/Shaders/TreeLighting.hlsl", "Assets/Terrainity/Shaders/TreeSurface.hlsl", "Assets/Terrainity/Shaders/TreeTransmission.hlsl",
+                        "Assets/Terrainity/Shaders/TreeWind.hlsl", "Assets/Terrainity/Runtime/TreeWindController.cs" }
+                    : Array.Empty<string>())
                 .Where(p => p.StartsWith("Assets/", StringComparison.Ordinal) && !AssetDatabase.IsValidFolder(p)).Distinct().ToArray();
 #if UNITY_6000_6_OR_NEWER
             UnityEditor.AssetPackage.Package.Export(new UnityEditor.AssetPackage.ExportPackageParameters(paths, destination));
@@ -257,9 +271,32 @@ namespace Terrainity.Editor
 #endif
         }
 
+        internal static bool IsFamilyFolderPath(string folder)
+            => !string.IsNullOrEmpty(folder) && !folder.Split('/').Any(p => p == "." || p == "..")
+                && (folder.StartsWith(OutputRoot + "/", StringComparison.Ordinal)
+                    || folder.StartsWith(RockExporter.OutputRoot + "/", StringComparison.Ordinal));
+
+        internal static void SaveGeneratedAsset(UnityEngine.Object asset, string path)
+        {
+            // Ownership transfers to AssetDatabase only after a successful save.
+            try { AssetDatabase.CreateAsset(asset, path); }
+            catch { UnityEngine.Object.DestroyImmediate(asset); throw; }
+        }
+
+        internal static Bounds WindBounds(Bounds bounds, float height)
+        {
+            bounds.Expand(new Vector3(Mathf.Max(1.2f, height * .16f),
+                Mathf.Max(.4f, height * .05f), Mathf.Max(1.2f, height * .16f)));
+            return bounds;
+        }
+
         internal static void EnsureFolder(string path)
         {
+            if (string.IsNullOrEmpty(path) || !(path == "Assets" || path.StartsWith("Assets/", StringComparison.Ordinal))
+                || path.Split('/').Any(p => p == "." || p == ".."))
+                throw new ArgumentException("Expected a folder beneath Assets.", nameof(path));
             if (AssetDatabase.IsValidFolder(path)) return;
+            if (path == "Assets") throw new IOException("The project's Assets folder is unavailable.");
             string parent = Path.GetDirectoryName(path).Replace('\\', '/');
             EnsureFolder(parent);
             if (string.IsNullOrEmpty(AssetDatabase.CreateFolder(parent, Path.GetFileName(path)))) throw new IOException("Cannot create " + path);

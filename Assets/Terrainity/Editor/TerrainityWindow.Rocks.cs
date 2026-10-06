@@ -29,7 +29,7 @@ namespace Terrainity.Editor
             {
                 string path = EditorUtility.SaveFilePanel("Save rock recipe", "", rockRecipe.assetName + ".json", "json");
                 if (string.IsNullOrEmpty(path)) return;
-                try { File.WriteAllText(path, JsonUtility.ToJson(rockRecipe, true)); }
+                try { TreeJsonStorage.Write(path, rockRecipe); }
                 catch (Exception e) { EditorUtility.DisplayDialog("Cannot save rock recipe", e.Message, "OK"); }
             });
             Action(files, "Load recipe", () =>

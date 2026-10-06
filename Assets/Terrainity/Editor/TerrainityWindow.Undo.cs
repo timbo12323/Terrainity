@@ -9,6 +9,8 @@ namespace Terrainity.Editor
     {
         [SerializeField] Vector3 previewOrbit = new Vector3(35, 10, 1);
         [SerializeField] Vector3 previewPan;
+        [SerializeField] Vector3 lodPreviewOrbit = new Vector3(35, 10, 2);
+        [SerializeField] Vector3 lodPreviewPan;
         bool undoInputInstalled, undoDragging, restoringUndo;
         int undoDragGroup = -1;
 
@@ -100,8 +102,16 @@ namespace Terrainity.Editor
         void CapturePreviewView()
         {
             if (preview == null) return;
-            previewOrbit = preview.ViewOrbit;
-            previewPan = preview.ViewPan;
+            if (previewMode == 1)
+            {
+                lodPreviewOrbit = preview.ViewOrbit;
+                lodPreviewPan = preview.ViewPan;
+            }
+            else
+            {
+                previewOrbit = preview.ViewOrbit;
+                previewPan = preview.ViewPan;
+            }
         }
     }
 }
