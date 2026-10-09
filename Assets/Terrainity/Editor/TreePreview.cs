@@ -171,6 +171,7 @@ namespace Terrainity.Editor
         int previousRockVariant;
         internal void BuildRock(RockRecipe recipe, int variant)
         {
+            grassStudy = false;
             if (!recipe.SameGeometry(previousRock) || previousRockVariant != variant || meshes.Count == 0)
             {
                 var mesh = RockGenerator.Build(recipe, variant);
@@ -190,9 +191,10 @@ namespace Terrainity.Editor
 
         internal void Build(TreeRecipe recipe, int variant, int pruneLevel = 0)
         {
+            grassStudy = false;
             RemovedWoodTriangles = 0;
             RemovedWoodVertices = 0;
-            if (previousRock != null && materials[0] != null) materials[0].shader = treeShader;
+            if (materials[0] != null) materials[0].shader = treeShader;
             previousRock = null;
             ClearMeshes();
             if (materials[0] == null) return;
@@ -211,6 +213,7 @@ namespace Terrainity.Editor
             Vector3 tip = new Vector3(recipe.lean * height * .18f, height, 0);
             var trunk = new TreeTrunkGrowth(recipe, tip);
             var limbs = TreeBranchGrowth.Generate(recipe, trunk, spread, variant);
+            treeWindRig = new TreeWindRig(limbs, height);
             float[] foliagePathStarts = null;
             float farthestFoliagePath = 1;
             if (recipe.showFoliage && recipe.Profile.foliageForm != TreeFoliageForm.PalmFrond
@@ -263,7 +266,7 @@ namespace Terrainity.Editor
                     if (recipe.Profile.foliageForm == TreeFoliageForm.PalmFrond)
                     {
                         int frondId = limbIndex * 144;
-                        if (!prunedCards.Contains(frondId)) PalmFrond(recipe, foliagePoints, frondId);
+                        if (!prunedCards.Contains(frondId)) PalmFrond(recipe, foliagePoints, frondId, limbIndex);
                         continue;
                     }
                     float foliageSize = recipe.crownWidth * spread * .12f * Mathf.Clamp(recipe.foliageSize, .25f, 3)
@@ -303,7 +306,7 @@ namespace Terrainity.Editor
                             rowSize *= recipe.CrownTaperScale(crownHeight);
                         }
                         LeafCards(recipe, center, direction, rowSize, clusterSeed,
-                            limbIndex, i, recipe.foliageAligned);
+                            limbIndex, i, treeWindRig.BranchWeight(limbIndex, ArcLength(foliagePoints, t)), recipe.foliageAligned);
                     }
                 }
             }

@@ -48,7 +48,8 @@ namespace Terrainity.Editor
                     TerrainityMeshUtility.AddTriangle(triangles, b, a + stride, b + stride);
                 }
             AddCaps(vertices, normals, uv, triangles, sides, ringCount, trunk.points[0], trunk.points[TreeTrunkGrowth.Segments]);
-            AddMesh(vertices, triangles, 0, normals, uv);
+            var mesh = AddMesh(vertices, triangles, 0, normals, uv);
+            SetWoodWind(mesh, trunk.points, sides, ringCount, (position, _) => treeWindRig.TrunkWeight(position));
         }
 
         int SimplifyWood(TreeRecipe recipe, List<Vector3> vertices, List<Vector3> normals, List<Vector2> uv,
@@ -172,6 +173,8 @@ namespace Terrainity.Editor
                 }
             AddCaps(vertices, normals, uv, triangles, sides, ringCount, points[0], points[points.Length - 1]);
             var limbMesh = AddMesh(vertices, triangles, 0, normals, uv);
+            SetWoodWind(limbMesh, limb.points, sides, ringCount,
+                (_, distance) => limb.isRoot ? 0 : treeWindRig.BranchWeight(limbIndex, distance));
             if (!limb.isRoot) sourceBranchLimbs[limbMesh] = limbIndex;
         }
 

@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Terrainity
 {
-    // Unity's WindZone data is not sent to custom tree shaders automatically.
+    // Unity's WindZone data is not sent to custom tree/grass shaders automatically.
     // One shared driver supplies the strongest directional zone and up to four local zones.
     [DefaultExecutionOrder(-100)]
     public sealed class TreeWindController : MonoBehaviour
@@ -13,6 +13,7 @@ namespace Terrainity
         static readonly int SphereCountId = Shader.PropertyToID("_TerrainityWindSphereCount");
         static readonly int SpheresId = Shader.PropertyToID("_TerrainityWindSphere");
         static readonly int SphereMotionId = Shader.PropertyToID("_TerrainityWindSphereMotion");
+        static readonly int TimeId = Shader.PropertyToID("_TerrainityWindTime");
         static TreeWindController instance;
 
         readonly Vector4[] spheres = new Vector4[MaxSpheres];
@@ -94,6 +95,7 @@ namespace Terrainity
             Shader.SetGlobalFloat(SphereCountId, count);
             Shader.SetGlobalVectorArray(SpheresId, spheres);
             Shader.SetGlobalVectorArray(SphereMotionId, sphereMotion);
+            Shader.SetGlobalFloat(TimeId, Time.time);
         }
 
         void OnDisable()
@@ -110,6 +112,7 @@ namespace Terrainity
             Shader.SetGlobalVector(DirectionId, Vector4.zero);
             Shader.SetGlobalVector(MotionId, Vector4.zero);
             Shader.SetGlobalFloat(SphereCountId, 0);
+            Shader.SetGlobalFloat(TimeId, 0);
         }
     }
 }

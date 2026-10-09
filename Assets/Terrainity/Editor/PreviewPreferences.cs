@@ -10,6 +10,8 @@ namespace Terrainity.Editor
         [SerializeField] PreviewLightingSettings lighting;
         [SerializeField] PreviewEnvironmentSettings environment;
         [SerializeField] bool panelVisible = true;
+        [SerializeField] PreviewWindSettings wind;
+        [SerializeField] bool windVisible;
         bool pendingSave;
         double saveAfter;
 
@@ -34,6 +36,22 @@ namespace Terrainity.Editor
             saveAfter = EditorApplication.timeSinceStartup + .5;
             EditorApplication.update -= SaveWhenIdle;
             EditorApplication.update += SaveWhenIdle;
+        }
+
+        internal bool RestoreWind(out PreviewWindSettings savedWind, out bool visible)
+        {
+            savedWind = wind == null ? null : Copy(wind);
+            visible = windVisible;
+            if (savedWind == null) return false;
+            savedWind.Validate();
+            return true;
+        }
+
+        internal void StoreWind(PreviewWindSettings currentWind, bool visible)
+        {
+            if (currentWind == null) return;
+            wind = Copy(currentWind);
+            windVisible = visible;
         }
 
         void SaveWhenIdle()

@@ -4,7 +4,7 @@ using UnityEngine.Rendering;
 
 namespace Terrainity.Editor
 {
-    // Material settings, gradients, occlusion and runtime wind vertex channels.
+    // Material settings, gradients and occlusion.
     internal sealed partial class TreePreview
     {
         void ApplyTints(TreeRecipe recipe)
@@ -46,7 +46,6 @@ namespace Terrainity.Editor
                 bool foliage = materialIndices[meshIndex] == 1;
                 var coordinates = new List<Vector2>(vertices.Length);
                 var canopyNormals = foliage ? new List<Vector3>(vertices.Length) : null;
-                var wind = new List<Vector4>(vertices.Length);
                 var cardRandom = new System.Random(unchecked(recipe.seed ^ 73856093));
                 float cardTint = 0;
                 int tintGroupSize = recipe.Profile.foliageForm == TreeFoliageForm.PalmFrond
@@ -71,44 +70,9 @@ namespace Terrainity.Editor
                         occluded = Mathf.Max(occluded, .65f * (1 - Mathf.SmoothStep(0, 1,
                             Mathf.Clamp01((vertices[i].y - bounds.min.y) / Mathf.Max(.1f, recipe.trunkRadius * 5)))));
                     coordinates.Add(new Vector2(t, occluded));
-                    float heightWeight = Mathf.Pow(heightFraction, 2);
-                    wind.Add(new Vector4(foliage ? .12f * heightWeight + .45f : .12f * heightWeight,
-                        foliage ? 1 : 0, 0, 0));
-                }
-                var meshTriangles = mesh.triangles;
-                for (int rangeIndex = 0; rangeIndex < pickRanges.Count; rangeIndex++)
-                {
-                    var range = pickRanges[rangeIndex];
-                    if (range.mesh != meshIndex) continue;
-                    if (range.part == TreePreviewPart.Branches)
-                    {
-                        float minDistance = float.MaxValue, maxDistance = float.MinValue;
-                        for (int t = range.start * 3; t < (range.start + range.count) * 3; t++)
-                        { minDistance = Mathf.Min(minDistance, uv[meshTriangles[t]].y); maxDistance = Mathf.Max(maxDistance, uv[meshTriangles[t]].y); }
-                        for (int t = range.start * 3; t < (range.start + range.count) * 3; t++)
-                        {
-                            int index = meshTriangles[t];
-                            var data = wind[index];
-                            data.x = .12f * Mathf.Pow(Mathf.InverseLerp(bounds.min.y, bounds.max.y, vertices[index].y), 2)
-                                + .42f * Mathf.InverseLerp(minDistance, maxDistance, uv[index].y);
-                            wind[index] = data;
-                        }
-                    }
-                    else if (range.part == TreePreviewPart.Roots)
-                        for (int t = range.start * 3; t < (range.start + range.count) * 3; t++) wind[meshTriangles[t]] = Vector4.zero;
-                    else if (range.part == TreePreviewPart.Foliage)
-                        for (int t = range.start * 3; t < (range.start + range.count) * 3; t++)
-                        {
-                            int index = meshTriangles[t];
-                            var data = wind[index];
-                            data.z = Mathf.Repeat(range.cardId * .6180339f, 1);
-                            data.w = range.cardId + 1;
-                            wind[index] = data;
-                        }
                 }
                 mesh.SetUVs(1, coordinates);
                 if (foliage) mesh.SetUVs(2, canopyNormals);
-                mesh.SetUVs(3, wind);
             }
         }
 

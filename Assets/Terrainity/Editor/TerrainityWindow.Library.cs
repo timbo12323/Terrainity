@@ -52,7 +52,7 @@ namespace Terrainity.Editor
                 {
                     var empty = Box(list, "card empty");
                     Text(empty, paths.Length == 0 ? "Your forest starts here." : "No matching prefabs.", "section-title");
-                    Text(empty, paths.Length == 0 ? "Use Generate prefab family in the tree or rock builder. Your saved siblings will appear here, ready for Terrain’s Add Tree dialog." : "Try another search or asset type.");
+                    Text(empty, paths.Length == 0 ? "Generate assets in the tree, grass or rock builder. Your saved prefabs will appear here for scene placement or Terrain painting." : "Try another search or asset type.");
                     Action(empty, "Open tree builder", () => { category = "Trees"; ShowTab(1); }, true);
                 }
             }

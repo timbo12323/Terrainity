@@ -11,6 +11,9 @@ CBUFFER_START(UnityPerMaterial)
     float4 _BaseMap_ST;
     half4 _BaseColor;
     half _Cutoff, _AlphaClip, _Cull, _Smoothness, _Feathering, _OcclusionStrength, _Transmission, _CanopySoftness, _AlphaToMask;
+    #if defined(TERRAINITY_GRASS_MATERIAL)
+        half _BladeEdgeSoftness, _RibbonEdges;
+    #endif
 CBUFFER_END
 
 half4 TerrainityLitColor(half4 tex, float2 tintCoordinate, float3 positionWS, float4 positionCS,

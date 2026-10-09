@@ -82,10 +82,16 @@
 
 .preview-stage { flex-direction: row; flex-shrink: 0; min-height: 180px; }
 .preview-stage > .preview { height: auto; flex-grow: 1; flex-basis: 0; min-width: 60px; flex-shrink: 1; }
-.lighting-panel { width: 238px; max-width: 65%; flex-shrink: 0; background-color: #202923; margin-left: 6px; padding: 10px; border-radius: 8px; }
+.preview-settings { width: 258px; max-width: 65%; flex-shrink: 0; margin-left: 6px; }
+.lighting-panel, .wind-panel { flex-shrink: 0; background-color: #202923; padding: 10px; border-radius: 8px; }
+.wind-panel { margin-bottom: 6px; }
+.wind-panel .unity-base-field__label { min-width: 96px; width: 96px; }
+.wind-panel .unity-slider__input { min-width: 34px; width: 40px; }
+.wind-panel .unity-foldout { margin-top: 4px; margin-bottom: 4px; }
+#previewOptions { flex-wrap: wrap; }
 .lighting-panel .unity-base-field__label { min-width: 60px; width: 60px; }
 .lighting-panel .unity-foldout { margin-top: 10px; margin-bottom: 8px; }
 .lighting-panel .unity-slider__input { min-width: 34px; width: 40px; }
 .light-rotation-dial { height: 180px; flex-shrink: 0; }
 .light-rotation-dial:focus { background-color: #29382f; }
-#lighting-title { font-size: 11px; -unity-font-style: bold; margin-bottom: 10px; }
+#lighting-title, #wind-title { font-size: 11px; -unity-font-style: bold; margin-bottom: 10px; }

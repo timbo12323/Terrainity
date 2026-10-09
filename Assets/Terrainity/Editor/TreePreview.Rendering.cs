@@ -40,13 +40,15 @@ namespace Terrainity.Editor
             float halfFov = renderer.camera.fieldOfView * Mathf.Deg2Rad * .5f;
             float effectiveFov = Mathf.Atan(Mathf.Tan(halfFov) * Mathf.Min(1, viewport.x / viewport.y));
             var viewBounds = lodSubmeshes > 0 ? lodReferenceBounds : bounds;
-            return Mathf.Max(viewBounds.extents.magnitude, 1) / Mathf.Sin(effectiveFov) * 1.08f * zoom;
+            return Mathf.Max(viewBounds.extents.magnitude, grassStudy ? .02f : 1) / Mathf.Sin(effectiveFov) * 1.08f * zoom;
         }
 
         internal void Draw(Rect rect)
         {
             if (rect.width < 2 || rect.height < 2 || Event.current.type != EventType.Repaint) return;
             if (materials[0] == null) { GUI.Label(rect, "No compatible preview shader found."); return; }
+            AdvanceWindClock();
+            foreach (var material in materials) ApplyWind(material, true);
             var camera = renderer.camera;
             var viewBounds = lodSubmeshes > 0 ? lodReferenceBounds : bounds;
             float radius = Mathf.Max(viewBounds.extents.magnitude, 1);
@@ -69,6 +71,7 @@ namespace Terrainity.Editor
 
         internal Texture2D ReferenceSnapshot(int size = 512)
         {
+            foreach (var material in materials) ApplyWind(material, false);
             var rect = new Rect(0, 0, size, size);
             float distance = ViewDistance(rect.size);
             renderer.BeginStaticPreview(rect);
@@ -81,13 +84,13 @@ namespace Terrainity.Editor
                 for (int i = 0; i < lodSubmeshes; i++) renderer.DrawMesh(meshes[0], Matrix4x4.identity, materials[i], i);
             else for (int i = 0; i < meshes.Count; i++) renderer.DrawMesh(meshes[i], Matrix4x4.identity, materials[materialIndices[i]], 0);
             DrawGrid();
-            DrawMeshOverlay();
-            DrawSelectionHighlight();
+            DrawMeshOverlay(false);
+            DrawSelectionHighlight(false);
             renderer.Render(true);
             return renderer.EndStaticPreview();
         }
 
-        void DrawMeshOverlay()
+        void DrawMeshOverlay(bool animated = true)
         {
             if (!ShowMeshOverlay) return;
             if (wireMaterial == null)
@@ -112,14 +115,19 @@ namespace Terrainity.Editor
                     { Edge(triangles[i], triangles[i + 1]); Edge(triangles[i + 1], triangles[i + 2]); Edge(triangles[i + 2], triangles[i]); }
                     var wire = new Mesh { name = "Terrainity preview edges", hideFlags = HideFlags.HideAndDontSave, indexFormat = IndexFormat.UInt32 };
                     wire.vertices = source.vertices;
+                    var weights = new List<Vector4>(); source.GetUVs(3, weights);
+                    if (weights.Count == source.vertexCount) wire.SetUVs(3, weights);
+                    var roots = new List<Vector4>(); source.GetUVs(4, roots);
+                    if (roots.Count == source.vertexCount) wire.SetUVs(4, roots);
                     wire.SetIndices(indices, MeshTopology.Lines, 0);
                     wire.bounds = source.bounds;
                     wireMeshes.Add(wire);
                 }
+            ApplyWind(wireMaterial, animated);
             foreach (var mesh in wireMeshes) renderer.DrawMesh(mesh, Matrix4x4.identity, wireMaterial, 0);
         }
 
-        void DrawSelectionHighlight()
+        void DrawSelectionHighlight(bool animated = true)
         {
             if (selectionWire == null || EditorApplication.timeSinceStartup >= selectionExpires) return;
             if (wireMaterial == null)
@@ -128,6 +136,7 @@ namespace Terrainity.Editor
                 if (shader == null) return;
                 wireMaterial = new Material(shader) { hideFlags = HideFlags.HideAndDontSave };
             }
+            ApplyWind(wireMaterial, animated);
             renderer.DrawMesh(selectionWire, Matrix4x4.identity, wireMaterial, 0);
         }
 
@@ -158,8 +167,17 @@ namespace Terrainity.Editor
             for (int meshIndex = 0; meshIndex < meshes.Count; meshIndex++)
             {
                 var mesh = meshes[meshIndex];
-                if (!mesh.bounds.IntersectRay(ray)) continue;
+                var pickBounds = mesh.bounds;
+                bool animated = windEnabled && wind != null && wind.speed > 0;
+                if (animated) pickBounds.Expand(3);
+                if (!pickBounds.IntersectRay(ray)) continue;
                 var vertices = mesh.vertices; var triangles = mesh.triangles; var uv = mesh.uv;
+                if (animated)
+                {
+                    var weights = new List<Vector4>(); mesh.GetUVs(3, weights);
+                    if (weights.Count == vertices.Length)
+                        for (int i = 0; i < vertices.Length; i++) vertices[i] = WindPosition(vertices[i], weights[i]);
+                }
                 for (int triangle = 0; triangle < triangles.Length / 3; triangle++)
                 {
                     int offset = triangle * 3, a = triangles[offset], b = triangles[offset + 1], c = triangles[offset + 2];
@@ -228,6 +246,8 @@ namespace Terrainity.Editor
             { Edge(triangles[i], triangles[i+1]); Edge(triangles[i+1], triangles[i+2]); Edge(triangles[i+2], triangles[i]); }
             selectionWire = new Mesh { name = "Terrainity selected preview part", hideFlags = HideFlags.HideAndDontSave, indexFormat = IndexFormat.UInt32 };
             selectionWire.vertices = source.vertices;
+            var weights = new List<Vector4>(); source.GetUVs(3, weights);
+            if (weights.Count == source.vertexCount) selectionWire.SetUVs(3, weights);
             selectionWire.SetIndices(lines, MeshTopology.Lines, 0); selectionWire.bounds = source.bounds;
             selectionExpires = EditorApplication.timeSinceStartup + 1;
         }

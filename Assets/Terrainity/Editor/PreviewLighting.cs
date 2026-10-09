@@ -71,7 +71,7 @@ namespace Terrainity.Editor
         }
     }
 
-    internal sealed class PreviewLightingPanel : ScrollView
+    internal sealed class PreviewLightingPanel : VisualElement
     {
         internal PreviewLightingPanel(PreviewLightingSettings settings, Action changed)
         {

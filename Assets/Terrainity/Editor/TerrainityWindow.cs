@@ -26,6 +26,9 @@ namespace Terrainity.Editor
         [SerializeField] PreviewEnvironmentSettings previewEnvironment = new PreviewEnvironmentSettings();
         [SerializeField] PreviewLightingSettings previewLighting = new PreviewLightingSettings();
         [SerializeField] bool showPreviewLighting = true;
+        [SerializeField] PreviewWindSettings previewWind = new PreviewWindSettings();
+        [SerializeField] bool showPreviewWind;
+        double nextWindRepaint;
         [SerializeField] bool showMeshOverlay;
         [SerializeField] int previewMode;
         [SerializeField] bool footerShowsVertices;
@@ -65,6 +68,7 @@ namespace Terrainity.Editor
         void OnEnable()
         {
             Undo.undoRedoPerformed += RestoreUndoSettings;
+            EditorApplication.update += UpdateWindPreview;
             if (PreviewPreferences.instance.Restore(out var lighting, out var environment, out bool visible))
             {
                 previewLighting = lighting;
@@ -72,9 +76,28 @@ namespace Terrainity.Editor
                 showPreviewLighting = visible;
             }
             else SavePreviewPreferences();
+            if (PreviewPreferences.instance.RestoreWind(out var wind, out bool windVisible))
+            {
+                previewWind = wind;
+                showPreviewWind = windVisible;
+            }
         }
 
-        void SavePreviewPreferences() => PreviewPreferences.instance.Store(previewLighting, previewEnvironment, showPreviewLighting);
+        void SavePreviewPreferences()
+        {
+            PreviewPreferences.instance.StoreWind(previewWind, showPreviewWind);
+            PreviewPreferences.instance.Store(previewLighting, previewEnvironment, showPreviewLighting);
+        }
+
+        void UpdateWindPreview()
+        {
+            if (currentTab != 1 || (category != "Trees" && category != "Grass") || previewElement == null || preview == null || !preview.WindAnimating) return;
+            double now = EditorApplication.timeSinceStartup;
+            if (now < nextWindRepaint) return;
+            nextWindRepaint = now + 1.0 / 30;
+            previewElement.MarkDirtyRepaint();
+            Repaint();
+        }
         void OnDisable()
         {
             ClearPruneCursor();
@@ -83,6 +106,7 @@ namespace Terrainity.Editor
             StopReleaseCheck();
             EndUndoDrag();
             Undo.undoRedoPerformed -= RestoreUndoSettings;
+            EditorApplication.update -= UpdateWindPreview;
             CancelPreviewUpdate();
             SavePreviewPreferences();
             PreviewPreferences.instance.Flush();
@@ -239,6 +263,7 @@ namespace Terrainity.Editor
         {
             lastPreviewUpdate = EditorApplication.timeSinceStartup;
             if (category == "Rocks") { RockChanged(); return; }
+            if (category == "Grass") { GrassChanged(); return; }
             if (previewMode == 1 && exportLods != null && exportLods.enabled)
                 preview?.BuildLod(recipe, variant, previewLodLevel, exportLods);
             else preview?.Build(recipe, variant);
@@ -256,7 +281,7 @@ namespace Terrainity.Editor
                 simplificationStats.text = $"{preview.RemovedWoodTriangles:N0} tris\n{preview.RemovedWoodVertices:N0} verts removed";
             int vertices = preview.Meshes.Sum(mesh => mesh.vertexCount);
             meshStats.text = $"Triangle Count: {preview.WoodTriangles + preview.FoliageTriangles:N0}\n"
-                + $"{geometryLabel}: {preview.WoodTriangles:N0} • Foliage: {preview.FoliageTriangles:N0}\n"
+                + (category == "Grass" ? $"Grass: {preview.WoodTriangles:N0}\n" : $"{geometryLabel}: {preview.WoodTriangles:N0} • Foliage: {preview.FoliageTriangles:N0}\n")
                 + $"Vertex Count: {vertices:N0}";
             if (category != "Trees") return;
             int triangles = preview.WoodTriangles + preview.FoliageTriangles;

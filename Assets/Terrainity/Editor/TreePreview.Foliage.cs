@@ -9,9 +9,10 @@ namespace Terrainity.Editor
         internal static Vector3 CardCorner(Vector3 socket, Vector3 right, Vector3 up, Vector2 uv, Vector2 pivot)
             => socket + right * (2 * (uv.x - pivot.x)) + up * (2 * (uv.y - pivot.y));
 
-        void PalmFrond(TreeRecipe recipe, Vector3[] points, int cardId)
+        void PalmFrond(TreeRecipe recipe, Vector3[] points, int cardId, int limbIndex)
         {
             var vertices = new List<Vector3>(); var uv = new List<Vector2>(); var triangles = new List<int>();
+            var wind = new List<Vector4>();
             float length = 0;
             for (int i = 1; i < points.Length; i++) length += Vector3.Distance(points[i - 1], points[i]);
             var axis = points[points.Length - 1] - points[0];
@@ -26,6 +27,11 @@ namespace Terrainity.Editor
                 vertices.Add(points[i] + Vector3.up * width * .25f);
                 vertices.Add(points[i] + right * width);
                 uv.Add(new Vector2(0, t)); uv.Add(new Vector2(.5f, t)); uv.Add(new Vector2(1, t));
+                float weight = treeWindRig.BranchWeight(limbIndex, ArcLength(points, i / (float)(points.Length - 1)));
+                float phase = Mathf.Repeat(cardId * .6180339f, 1);
+                wind.Add(new Vector4(weight, t * t, phase, cardId + 1));
+                wind.Add(new Vector4(weight, 0, phase, cardId + 1));
+                wind.Add(new Vector4(weight, t * t, phase, cardId + 1));
                 if (i == 2) continue;
                 int n = vertices.Count - 6;
                 TerrainityMeshUtility.AddTriangle(triangles, n, n + 1, n + 3);
@@ -42,16 +48,18 @@ namespace Terrainity.Editor
             }
             var mesh = new Mesh { name = "Terrainity palm frond", hideFlags = HideFlags.HideAndDontSave };
             mesh.SetVertices(vertices); mesh.SetUVs(0, uv); mesh.SetTriangles(triangles, 0);
+            mesh.SetUVs(3, wind);
             mesh.RecalculateNormals(); mesh.RecalculateBounds();
             meshes.Add(mesh); materialIndices.Add(1); sourceParts.Add(TreePreviewPart.Foliage);
             sourceCardRanges[mesh] = new List<PickRange> { new PickRange { start = 0, count = triangles.Count / 3, cardId = cardId } };
         }
 
         void LeafCards(TreeRecipe recipe, Vector3 center, Vector3 branchDirection, float size, int clusterSeed,
-            int limbIndex, int rowIndex, bool aligned = false)
+            int limbIndex, int rowIndex, float socketWeight, bool aligned = false)
         {
             var vertices = new List<Vector3>(); var triangles = new List<int>();
             var normals = new List<Vector3>(); var uv = new List<Vector2>();
+            var wind = new List<Vector4>();
             var cardsForPicking = new List<PickRange>();
             int cards = aligned ? Mathf.Clamp(recipe.foliageAlignSides, 1, 3) : Mathf.Clamp(recipe.foliageCards, 2, 12);
             float phase = Range(0, 360);
@@ -134,6 +142,8 @@ namespace Terrainity.Editor
                         var position = CardCorner(center + offset, right, up, coordinate, pivot)
                             + up.normalized * (radialDistance - length * along) + forward * (depth * bendSide);
                         vertices.Add(position); uv.Add(coordinate);
+                        float flutter = Mathf.Abs(coordinate.y - pivot.y) / Mathf.Max(pivot.y, 1 - pivot.y);
+                        wind.Add(new Vector4(socketWeight, flutter * flutter, Mathf.Repeat(cardId * .6180339f, 1), cardId + 1));
                         var corner = right * (2 * coordinate.x - 1) + up * (2 * coordinate.y - 1);
                         var curvedNormal = forward * Mathf.Cos(arcAngle) - up.normalized * (Mathf.Sin(arcAngle) * bendSide);
                         normals.Add((curvedNormal * cardSize + corner * .35f).normalized);
@@ -153,11 +163,13 @@ namespace Terrainity.Editor
                     vertices.RemoveRange(firstVertex, addedVertices);
                     normals.RemoveRange(firstVertex, addedVertices);
                     uv.RemoveRange(firstVertex, addedVertices);
+                    wind.RemoveRange(firstVertex, addedVertices);
                 }
                 else cardsForPicking.Add(new PickRange { start = firstTriangle, count = triangles.Count / 3 - firstTriangle, cardId = cardId });
             }
             if (triangles.Count == 0) return;
             var cardMesh = AddMesh(vertices, triangles, 1, normals, uv);
+            cardMesh.SetUVs(3, wind);
             sourceCardRanges[cardMesh] = cardsForPicking;
         }
     }

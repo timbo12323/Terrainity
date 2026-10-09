@@ -56,6 +56,7 @@ namespace Terrainity.Editor
             var type = new PopupField<string>("Asset type", new List<string> { "Trees", "Grass", "Rocks", "Bushes" }, category);
             type.RegisterValueChangedCallback(e => { category = e.newValue; variant = 0; ShowTab(1); }); controls.Add(type);
             if (category == "Rocks") { BuildRockBuilder(controls); return; }
+            if (category == "Grass") { BuildGrassBuilder(controls); return; }
             if (category != "Trees")
             {
                 Text(controls, category + " • Coming next", "section-title");

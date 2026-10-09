@@ -21,7 +21,7 @@ namespace Terrainity.Editor
             placeholder.Clear();
             var help = builderPage.Q("previewHelp");
             help.Clear();
-            AddHeaderHelp(help, "Left-drag to orbit. Middle-drag or Shift + left-drag to pan. Scroll to zoom. Reset view recenters the camera. " + (category == "Trees" ? "Shift-click a tree part to highlight it and open its controls." : "Use the mesh overlay to inspect the generated rock topology."));
+            AddHeaderHelp(help, "Left-drag to orbit. Middle-drag or Shift + left-drag to pan. Scroll to zoom. Reset view recenters the camera. " + (category == "Trees" ? "Shift-click a tree part to highlight it and open its controls." : "Use the mesh overlay to inspect the generated topology."));
             var previewTabs = builderPage.Q("previewTabs");
             previewTabs.Clear();
             livePreviewTab = new Button(() => SetPreviewMode(0)) { text = "Live preview" };
@@ -51,12 +51,14 @@ namespace Terrainity.Editor
             preview.SetLighting(previewLighting);
             if (previewEnvironment == null) previewEnvironment = new PreviewEnvironmentSettings();
             preview.SetEnvironment(previewEnvironment);
+            if (previewWind == null) previewWind = new PreviewWindSettings();
+            preview.SetWind(previewWind, (category == "Trees" || category == "Grass") && showPreviewWind);
             var previewStage = builderPage.Q("previewStage");
             var previewHost = builderPage.Q("previewImageHost");
             previewHost.Clear();
             previewElement = new VisualElement { tooltip = category == "Trees"
                 ? "Shift-click a trunk, root, branch, or foliage card to highlight it and jump to its controls. Shift-drag still pans the view."
-                : "Drag to orbit, Shift-drag to pan, and scroll to zoom. Use Mesh overlay to inspect the rock." };
+                : "Drag to orbit, Shift-drag to pan, and scroll to zoom. Use Mesh overlay to inspect the generated mesh." };
             previewElement.style.flexGrow = 1;
             previewElement.RegisterCallback<GeometryChangedEvent>(_ => RefreshLodLevel());
             previewHost.Add(previewElement);
@@ -91,9 +93,23 @@ namespace Terrainity.Editor
             UpdatePreviewModeUI();
             ConfigurePreviewInput(previewElement, previewImage);
             for (int i = previewStage.childCount - 1; i >= 1; i--) previewStage.RemoveAt(i);
+            var settingsPanel = new ScrollView { name = "previewSettings", horizontalScrollerVisibility = ScrollerVisibility.Hidden };
+            settingsPanel.AddToClassList("preview-settings");
             var lightingPanel = new PreviewLightingPanel(previewLighting, () => { SavePreviewPreferences(); preview.SetLighting(previewLighting); previewImage.MarkDirtyRepaint(); Repaint(); });
             lightingPanel.Add(new PreviewEnvironmentPanel(previewEnvironment, () => { SavePreviewPreferences(); preview.SetEnvironment(previewEnvironment); previewImage.MarkDirtyRepaint(); Repaint(); }));
-            previewStage.Add(lightingPanel);
+            var windPanel = new PreviewWindPanel(previewWind,
+                () => { SavePreviewPreferences(); preview.SetWind(previewWind, showPreviewWind); previewImage.MarkDirtyRepaint(); Repaint(); },
+                () => { preview.RestartWind(); previewImage.MarkDirtyRepaint(); Repaint(); }, category == "Grass");
+            settingsPanel.Add(windPanel);
+            settingsPanel.Add(lightingPanel);
+            previewStage.Add(settingsPanel);
+            void UpdateSettingsVisibility()
+            {
+                bool windVisible = (category == "Trees" || category == "Grass") && showPreviewWind;
+                windPanel.EnableInClassList("hidden", !windVisible);
+                settingsPanel.EnableInClassList("hidden", !windVisible && !showPreviewLighting);
+            }
+            UpdateSettingsVisibility();
             lightingPanel.style.display = showPreviewLighting ? DisplayStyle.Flex : DisplayStyle.None;
             previewHeight = Mathf.Clamp(previewHeight, 180, 1600);
             previewStage.style.height = previewHeight;
@@ -136,9 +152,24 @@ namespace Terrainity.Editor
             viewButtons.Clear();
             var lightingToggle = new Toggle("Lighting") { value = showPreviewLighting };
             lightingToggle.AddToClassList("preview-option");
-            lightingToggle.RegisterValueChangedCallback(e => { showPreviewLighting = e.newValue; SavePreviewPreferences(); lightingPanel.style.display = e.newValue ? DisplayStyle.Flex : DisplayStyle.None; });
+            lightingToggle.RegisterValueChangedCallback(e => { showPreviewLighting = e.newValue; SavePreviewPreferences(); lightingPanel.style.display = e.newValue ? DisplayStyle.Flex : DisplayStyle.None; UpdateSettingsVisibility(); });
             viewOptions.Add(lightingToggle);
-            Action(viewButtons, "Next sibling", () => { variant = (variant + 1) % (category == "Rocks" ? rockRecipe.variantCount : recipe.variantCount); Changed(); });
+            if (category == "Trees" || category == "Grass")
+            {
+                var windToggle = new Toggle("Wind preview") { name = "windPreviewToggle", value = showPreviewWind,
+                    tooltip = category == "Grass" ? "Study travelling gust waves. Wave size, travel, breakup and blade-response variation export with grass; runtime force and direction come from Wind Zones." : "Animate wind and show motion controls. Preview only; settings are not exported." };
+                windToggle.AddToClassList("preview-option");
+                windToggle.RegisterValueChangedCallback(e =>
+                {
+                    showPreviewWind = e.newValue;
+                    preview.SetWind(previewWind, showPreviewWind);
+                    SavePreviewPreferences();
+                    UpdateSettingsVisibility();
+                    previewImage.MarkDirtyRepaint(); Repaint();
+                });
+                viewOptions.Add(windToggle);
+            }
+            if (category != "Grass") Action(viewButtons, "Next sibling", () => { variant = (variant + 1) % (category == "Rocks" ? rockRecipe.variantCount : recipe.variantCount); Changed(); });
             Action(viewButtons, "Reset view", () => { preview.ResetView(); CapturePreviewView(); RefreshLodLevel(); previewElement.MarkDirtyRepaint(); });
             var exportHost = builderPage.Q("previewExport");
             exportHost.Clear();
